@@ -1,0 +1,88 @@
+#!/usr/bin/perl -w
+
+$DIR = "/home/lars/html/gcc-testresults";
+
+print "Content-type: text/html\n\n";
+print "<html><body>\n";
+
+$date = `ls -1 $DIR/$ENV{VAR_version}/$ENV{VAR_target} | tail -1`;
+
+print "<table cellspacing=\"10\">\n";
+
+print "<tr>";
+print "<th>Date</th>";
+print "<th>PASS</th>";
+print "<th>FAIL</th>";
+print "<th>XPASS</th>";
+print "<th>XFAIL</th>";
+print "<th>UNRESOLVED</th>";
+print "<th>UNSUPPORTED</th>";
+print "<th>UNTESTED</th>";
+print "</tr>\n";
+
+@a = split (' ', `ls -1 $DIR/$ENV{VAR_version}/$ENV{VAR_target}`);
+foreach $i (@a) {
+    file_summary ($i)
+}
+
+print "</body></html>\n";
+exit 0;
+
+sub file_summary {
+    my $date = shift;
+    open (F, "$DIR/$ENV{VAR_version}/$ENV{VAR_target}/$date");
+    $p = 0;
+    while (<F>) {
+	if (/=== $ENV{VAR_tool} Summary ===/) {
+	    $p = 1;
+	    $pass = "";
+	    $fail = "";
+	    $xpass = "";
+	    $xfail = "";
+	    $unresolved = "";
+	    $unsupported = "";
+	    $untested = "";
+	} elsif ($p && /^\//) {
+	    $p = 0;
+	    print "<tr>";
+	    $date =~ s/\.txt//;
+	    $n = $pass + $fail + $xpass + $xfail + $unresolved 
+		+ $unsupported + $untested;
+	    print "<td>$date</td>\n";
+	    print_numbers ($pass, $n);
+	    print_numbers ($fail, $n);
+	    print_numbers ($xpass, $n);
+	    print_numbers ($xfail, $n);
+	    print_numbers ($unresolved, $n);
+	    print_numbers ($unsupported, $n);
+	    print_numbers ($untested, $n);
+	    print "</tr>\n";
+	} elsif ($p && /^# of (.+?)\s+([0-9]+)$/) {
+	    $pass = $2 if ($1 eq "expected passes");
+	    $fail = $2 if ($1 eq "unexpected failures");
+	    $xpass = $2 if ($1 eq "unexpected successes");
+	    $xfail = $2 if ($1 eq "expected failures");
+	    $unresolved = $2 if ($1 eq "unresolved tests");
+	    $unsupported = $2 if ($1 eq "unsupported tests");
+	    $untested = $2 if ($1 eq "untested testcases");
+	}
+    }
+    close (F);
+}
+
+sub print_numbers {
+    my $x = shift;
+    my $n = shift;
+    if ($x ne "") {
+#	print "<td>$x, " . percent($x, $n) . "%</td>";
+	print "<td>$x</td>";
+    } else {
+	print "<td></td>";
+    }
+}
+
+sub percent {
+    my $x = shift;
+    my $n = shift;
+    return int (1000 * $x / $n + .5) / 10;
+}

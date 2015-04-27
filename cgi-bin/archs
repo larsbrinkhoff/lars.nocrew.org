@@ -1,0 +1,29 @@
+#!/bin/sh
+
+DIR=/home/lars/html/gcc-testresults
+
+echo Content-type: text/html
+echo ''
+echo '<html><body>'
+ls -1 $DIR/$VAR_version | while read i; do
+    i=`echo $i | sed s/-.*$//`
+    case "$i" in
+    alpha*)	i=alpha;;
+    arm*)	i=arm;;
+    hppa*)	i=hppa;;
+    i?86*)	i=i386;;
+    ia64*)	i=ia64;;
+    mips*)	i=mips;;
+    pdp10*)	i=pdp10;;
+    pdp11*)	i=pdp11;;
+    powerpc*)	i=powerpc;;
+    rs6000*)	i=powerpc;;
+    s390*)	i=s390;;
+    sparc*)	i=sparc;;
+    esac
+    echo "$i"
+done | sort | uniq | while read j; do
+    echo "$j<br>"
+done
+echo '</body></html>'
+exit 0

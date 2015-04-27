@@ -1,0 +1,211 @@
+ ATARI INTRODUCES FIRST COMPUTER SYSTEM DESIGNED FOR PERSONAL INTEGRATED
+ MEDIA
+
+ Atari Falcon030(tm) brings high-end capabilities to the market for less
+ than $1,000.
+
+ Boston (September 23, 1992)  Atari Corporation today announced the first
+ available personal integrated media system, the Atari Falcon030
+ computer.  From education to entertainment, personal integrated media
+ (PIM) has the potential to change consumers' lives as dramatically as
+ personal computers changed business offices.  The system will be
+ available in November at authorized Atari Dealers across the country.
+
+ A full scale computer based on the powerful 16 Mhz Motorola 68030
+ microprocessor, the Atari Falcon030 is specifically designed for
+ personal integrated media functions.  It gives even inexperienced users
+ the ability to combine and manipulate video, audio, animation,
+ telecommunications, text and graphics.  The system is optimized for
+ these functions and incorporates technology usually reserved for high-
+ end production systems.
+
+ "The Atari Falcon030 is an ideal entry into the new and growing personal
+ integrated media market," said Sam Tramiel, Atari's president and CEO.
+ "It's a powerful system that gives users access to a whole new world of
+ applications.  Yet the system remains easy-to-use and affordable."
+
+ Consumers will be able to use the Atari Falcon030 as a color video
+ phone, communicating in sound and pictures with other Atari Falcon030
+ users.  The system makes it possible to create home videos complete with
+ text and music, record lead vocals on a favorite rock 'n roll classic
+ with the originals musicians playing along; narrate and score a family
+ photo album, produce a visual family tree, invent and play an adventure
+ game set in a childhood home; and much more.
+
+ Atari Falcon030 users have immediate access to advanced PIM capabilities
+ thanks to the following features:
+
+ ||| Atari's Graphic Environment Manager (GEM) and built in graphics
+     co-processor
+ ||| A true color mode that includes more than 65,000 colors, twice the
+     capability of the Apple MacIntosh LCII
+ ||| The industry's only standard-equipped MIDI input/output ports
+ ||| 16-bit stereo sound- input and output- for the highest quality
+     reproductions available at sample rates up to 50 kHz
+ ||| Built-in composite and RF video outputs for easy connection to video
+     cassette recorders
+ ||| External video sync for high quality genlocking
+ ||| Overlay mode for easy video titling and special effects
+ ||| Software for PIM applications such as desktop video productions,
+     animations, music and entertainment.
+
+ No other computer provides this level of performance and PIM
+ capabilities at a more economical price.
+
+ Applications Highlights
+
+ PIM technology will make thousands of new capabilities possible.  There
+ are already hundreds of software applications available for the Atari
+ Falcon030, making it easy for users to accomplish a variety of new
+ goals.
+
+ Movie Quality Video
+
+ With the Atari Falcon030, users can explore new avenues in home video,
+ from inserting titles and credits to professional quality editing.  They
+ can create music videos, cartoons, and school presentations.
+
+ The Atari Falcon030 offers state of the art graphics, true color 16-bit
+ mode allowing up to 640x480 resolution and a display of up to 65,536 on-
+ screen colors.  It accepts external video synch for high quality
+ genlocking, and uses a unique overlay mode for effortless titling and
+ special effects.  In addition, users can obtain composite video signals
+ directly from the Falcon030.
+
+ High Quality Video
+
+ Atari takes the music-industry standard -MIDI- one step further.  The
+ only company to provide MIDI as a standard system component, the Atari
+ Falcon030 also incorporates Motorola's 56001 digital signal processor
+ (DSP) for the highest quality audio and special effects capabilities,
+ allowing users to remove lead vocals and create their own Karoke machine
+ or run music educations programs.
+
+ The Atari Falcon030 provides users with features that are usually
+ restricted to expensive, high-end machines.  But without any additional
+ equipment, Atari Falcon030 users can record on two stereo tracks and add
+ graphic equalization and special effects such as surround sound,
+ harmonizing, reverberation, and echo.
+
+ Pricing and Availability
+
+ The Atari Falcon030 is a simple to use computer that doesn't require
+ add-on boards or other costly optional hardware.  The Atari Falcon030
+ already includes exactly what users need.  The machine offers a wealth
+ of ports for communicating with existing peripherals, and application
+ software for the Atari Falcon030 is readily available.
+
+ Priced at $799 with 1 MB of RAM, the Atari Falcon030 is ideal for users
+ who want a powerful, efficient, and cost-effective tool that can take
+ advantage of today's technologies.  The system will be available in
+ November through authorized Atari dealers.
+
+ Atari Corporation (AMEX:ATC) is a worldwide manufacturer and marketer of
+ palmtop through desktop computer systems.  The company sells it's
+ systems, peripherals, and software through authorized distributors,
+ resellers and integrators.
+
+ Atari is a registered trademark of Atari Corporation.  Atari Falcon030,
+ TOS, MultiTOS, NewDesk and BLiTTER, are trademarks of Atari Corporation.
+ Motorola is a registered trademark of Motorola, Inc.
+
+ Atari Falcon030 Specifications
+
+ Contact:  Sue Baelen or Anne Ellingsen      Ron Smith or Bill Rehbock
+           Redgate Communications            Atari Corporation
+           (415) 777-3911                    (408) 745-2000
+           (415) 777-0896 - Fax              (408) 745-2088 - Fax
+
+ System Architecture
+ -------------------
+
+ ||| Motorola 68030 operating at 16Mhz
+ ||| On-chip demand-paged memory management
+ ||| Seperate on-chip 256-byte instruction and data caches
+ ||| Independent address and data buses for increased performance
+ ||| Pipelined architecture
+ ||| 32-bit data/address bus
+ ||| 1, 4 or 14 MB RAM configurations
+ ||| 512K internal ROM; 128K external cartridge
+
+ Sound
+ -----
+
+ ||| Eight 16-bit digital audio DMA record and playback channels with up
+     to 50kHz sampling rate
+ ||| Stereo 16-bit digital DMA audio input/output
+ ||| SDMA sound/DMA co-processor
+
+ Digital Signal Processor
+ ------------------------
+
+ ||| Motorola 56001 DSP operating at 32 MHz
+ ||| 96 MOPS performance at 32 MHz
+ ||| 32K words of 0 wait-state static RAM
+ ||| DSP connector allows easy connection of low-cost 19.2K baud fax/data
+     modems, voice mail systems, direct-to-disk digital audio recorders,
+     JPEG/MPEG image compression, etc.
+
+ Graphics
+ --------
+
+ ||| 640 x 480 resolution and 256 colors in Super VGA
+ ||| True color 16-bit mode allows display of up to 65,536 colors
+ ||| Accepts extermal video sync signal to allow high-quality genlocking
+ ||| Overlay mode for easy video titling and special effects
+ ||| Optional overscan
+ ||| 262,144 possible colors
+ ||| Hardware-assisted horizontal fine scrolling
+ ||| BLiTTER graphics co-processor
+
+ Expansion Bus
+ -------------
+
+ ||| Internal direct processor slot for 386SX PC emualtion, DMA co-
+     processors, etc.
+ ||| Optional processor socket for other co-processors
+
+ Standard Ports
+ --------------
+
+ ||| SCSI II port with Direct Memory Access (DMA)
+ ||| High-speed LocalTalk-compatible LAN port
+ ||| Connector for analog RGB color (VGA or ST) or composite video
+ ||| RS232C serial port
+ ||| Bi-directional parallel port (also suitable for image scanners)
+ ||| Cartridge poet (128K capacity)
+ ||| MIDI in/out
+ ||| Minature stereo plug input/output
+ ||| Four 9-pin joystick connectors
+ ||| Two 15-pin enhanced digital/analog controller and light pen 
+     connectors
+
+ Data Storage
+ ------------
+
+ ||| 1.44 MB floppy disk drive
+ ||| MS-DOS-format compatibility
+ ||| Optional internal IDE hard drive
+
+ User Interface
+ --------------
+
+ ||| Standard QWERTY keyboard layout.  Low profile, sculptured ergonomic
+     design
+ ||| 94/5 keys; 10 function keys.  Seperate numeric and cursor keypads
+ ||| Keyboard processor to reduce CPU overhead
+ ||| 2-button mouse supplied as standard
+
+ System Software
+ ---------------
+
+ ||| Pre-emptive multitasking with adaptive prioritization (MultiTOS)
+ ||| Inter-process commuication through MultiTOS messages and pipes
+ ||| TOS operating system in ROM
+ ||| Hierarchical file system with subdirectories and path names
+ ||| Icon-based graphical user interface with self-explanatory command
+     functions
+ ||| Online help
+ ||| Multiple window user interface with icons and drop-down menus
+ ||| NewDesk desktop and eXtensible Control panel allows customization by
+     user

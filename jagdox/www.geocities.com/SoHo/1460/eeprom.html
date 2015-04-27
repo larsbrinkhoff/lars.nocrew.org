@@ -1,0 +1,283 @@
+<HTML>
+<! $Id: eeprom.html,v 1.7 1997/11/16 18:14:40 nat Exp $>
+<HEAD>
+<TITLE>EEPROM TUTORIAL</TITLE>
+</HEAD>
+<BODY background="jaguar_blur.gif">
+<PRE>
+# -------------------------------------------------------------------
+# EEPROM TUTORIAL                      (c) Copyright 1997 Nat! & KKP
+# -------------------------------------------------------------------
+# These are some of the results/guesses that Klaus and Nat! found
+# out about the Jaguar with a few helpful hints by other people, 
+# who'd prefer to remain anonymous. 
+#
+# Since we are not under NDA or anything from Atari we feel free to 
+# give this to you for educational purposes only.
+#
+# Please note, that this is not official documentation from Atari
+# or derived work thereof (both of us have never seen the Atari docs)
+# and Atari isn't connected with this in any way.
+#
+# Please use this informationphile as a starting point for your own
+# exploration and not as a reference. If you find anything inaccurate,
+# missing, needing more explanation etc. by all means please write
+# to us:
+#    nat@zumdick.ruhr.de
+# or
+#    kp@eegholm.dk
+#
+# If you could do us a small favor, don't use this information for
+# those lame flamewars on r.g.v.a or the mailing list.
+#
+# HTML soon ?
+# -------------------------------------------------------------------
+# $Id: eeprom.html,v 1.7 1997/11/16 18:14:40 nat Exp $
+# -------------------------------------------------------------------
+
+EEPROM tutorial:
+=-=-=-=-=-=-=-=-=
+
+This is just a little code, probably all you ever going to need to
+access the EEPROM. This is written with PURE-ASM in mind in case
+you're wondering about the slightly strange (and not 100% optimal)
+register usage/wastage. Anyway this code runs fine on my Jaguar and
+I am convinced I got the timing right.
+This is coded for a 68000. For a 68030 be sure to put a NOP behind 
+all external hardware register accesses, because the 68030 has a 
+delayed write feature, where the NOP syncs. Then add a few NOPs for 
+timing purposed. One NOP -> 4 cycles, 
+
+
+CLOCK  = EEPROM_CLOCK
+RDATA  = EEPROM_RDATA
+WDATA  = EEPROM_WDATA
+STROBE = EEPROM_STROBE
+
+      
+; --------------------------------------------------------------
+;                        read_whole_eeprom
+; --------------------------------------------------------------
+; Read EEPROM into 128 bytes of wordaligned buffer space (A0)
+; wasting D1-D2 in the process
+;
+read_whole_eeprom:
+                  MOVE.W    D3,-(A7)
+
+                  CLR.W     D3               ; cell counter
+
+.copy:            MOVE.W    D3,D0
+                  JSR       eeprom_read 
+                  MOVE.W    D0,(A0)+
+                  ADDQ.W    #1,D3
+                  CMP.W     #$40,D3
+                  BNE.B     .copy
+
+                  MOVE.W    (A7)+,D3
+                  RTS
+                  
+   
+
+
+; --------------------------------------------------------------
+;                      write_whole_eeprom
+; --------------------------------------------------------------
+; Write complete EEPROM with 128 bytes of user data pointed to
+; by A0, which contains of course an even address
+; This can take up to 750ms even in successful writes
+; wastes D1-D2
+; returns in D0: 0: success  
+
+write_whole_eeprom:
+                  BSR      eeprom_unlock
+
+                  MOVE.W   D3,-(A7)
+                  CLR.W    D3
+
+.copy:             
+                  MOVE.W   (A0)+,D0            ;; get word
+                  MOVE.W   D3,D1               ;; get cell # in D1
+                  BSR      eeprom_write        ;; write it down
+                  BEQ      .failed             ;; timeout ->
+                  ADDQ.W   #1,D3               ;; try the next
+                  CMP.W    #$40,D3
+                  BNE.B    .copy
+
+.failed:           
+                  MOVE     D0,D3               ;; save write status
+                  BSR      eeprom_lock         ;; lock cart again
+                  MOVE     D3,D0               ;; restore status
+                  MOVE.W   (A7)+,D3         
+                  SUB.W    #1,D0               ;; make C-like status
+                  RTS
+   
+                           
+
+; --------------------------------------------------------------
+;                        eeprom_unlock
+; --------------------------------------------------------------
+; Unlock the EEPROM for writing
+; 
+; D0: wasted
+; D1: wasted
+; D2: wasted
+;
+eeprom_unlock:
+                  LEA       CLOCK,A1
+                  MOVE.W    #$130,D0
+                  BRA       eeprom_w_cmd
+   
+
+; --------------------------------------------------------------
+;                        eeprom_lock
+; --------------------------------------------------------------
+; Lock the EEPROM against writing
+; 
+; D0: wasted
+; D1: wasted
+; D2: wasted
+;
+eeprom_lock:
+                  LEA       CLOCK,A1
+                  MOVE.W    #$100,D0
+                  BRA       eeprom_w_cmd
+                    
+
+; --------------------------------------------------------------
+;                        eeprom_write
+; --------------------------------------------------------------
+; D0:   data 
+; D1:   cell #
+;
+; retuens:
+; D0:   0 = successful
+; A1:   wasted
+; D2:   wasted
+eeprom_write:
+                  LEA       CLOCK,A1
+                  MOVE      D0,D2
+                  MOVEQ     #$3F,D0
+                  AND       D1,D0
+                  ORI.W     #$140,D0         ;; set prepare to write bits
+                  BSR       eeprom_w_cmd
+                        
+                  MOVE      D2,D0
+                  BSR       eeprom_w_data
+
+                  bra       eeprom_wait      ;; you MUST pull CS down now
+   
+
+; --------------------------------------------------------------
+;                        eeprom_read
+; --------------------------------------------------------------
+; Read a word from an EEPROM cell
+; 
+; D0: cellnumber, returned data also in D0
+; D1: wasted
+; D2: wasted
+;
+   module eeprom_read
+                  LEA       CLOCK,A1
+                  AND.W     #$3F,D0
+                  ORI.W     #$180,D0         ;; set prepare to read bits
+                  BSR       eeprom_w_cmd
+;                  BRA       eeprom_r_data    ;; fall thru
+                  
+        
+; --------------------------------------------------------------
+;                        eeprom_r_data
+; --------------------------------------------------------------
+;  Read 16 bits of data over the serial line
+;  return them in D0
+;  wasting D1-D2
+;
+eeprom_r_data:
+                  MOVEQ     #0,D0 
+                  MOVEQ     #$F,D2           ;; do 16 bits
+.readbit:         TST.W     CLOCK-CLOCK(A1)  ;; EEPROM has max 500ns time to
+                  NOP                        ;; provide us with the data                
+                  NOP   
+                  MOVE.W    RDATA-CLOCK(A1),D1 
+                  LSR.W     #1,D1            ;; get LSB into X
+                  ADDX.W    D0,D0            ;; shift left and add X
+                  DBF       D2,.readbit 
+                  RTS 
+   
+   
+
+; --------------------------------------------------------------
+;                        eeprom_w_data
+; --------------------------------------------------------------
+;
+; write 16 bits of D0 data, wasting D1 in the process
+;
+eeprom_w_data::   
+                  MOVEQ     #$F,D1           ;; wanna do 16 bits
+                  BRA.B     _writebit
+        
+
+; --------------------------------------------------------------
+;                        eeprom_w_cmd
+; --------------------------------------------------------------
+; Initiate command mode by doing the CS ChipSelect
+; then write 9 bits of D0 data onto the serial line,
+; wasting D1 in the process
+;
+eeprom_w_cmd:  
+                  ROL.W     #7,D0            ;; move 9th bit into MSB
+                  TST.W     STROBE-CLOCK(A1) ;; pull CS down
+                  MOVEQ     #8,D1            ;; wanna do 9 bits
+
+_writebit:
+.loop:            ROL.W     #1,D0            ;; get MSB into LSB
+                  MOVE.W    D0,WDATA-CLOCK(A1) ;; write it down #1#
+                                             ;; wait 1us for EEPROM           
+                  DBF       D1,.loop         ;; 8 + 8 + 10 -> 28 > 13.3
+                  RTS 
+   
+            
+
+; --------------------------------------------------------------
+;                        eeprom_busy
+; --------------------------------------------------------------
+; Just check whether the damn thing is still busy.  Not very 
+; useful this routine, but heck for completeness..
+; returns:  1=ready  0=busy
+eeprom_busy:
+                  TST.W     STROBE-CLOCK(A1)   ;; pull CS down shortly
+                  MOVEQ     #1,D0              ;; wait for 500ns until
+                  AND.W     RDATA-CLOCK(A1),D0 ;; we read the data 
+                  RTS
+   
+
+; --------------------------------------------------------------
+;                        eeprom_wait
+; --------------------------------------------------------------
+; Check whether the EEPROM is still busy writing. It must do this
+; in a timespan of 10ms. Busy waiting. ARGH!
+;
+; wastes D1 in the process!!
+; returns in D0:  1=ready  0: timeouted!!
+eeprom_wait:
+                  MOVE.W    #5200,D1          ;; > 10ms timeout
+                  TST.W     STROBE-CLOCK(A1)  ;; pull CS down
+.loop:                                        ;; inner loop:
+                  MOVEQ     #1,D0             ;; 4 + 12 + 10 -> 26 cycles
+                  AND.W     RDATA-CLOCK(A1),D0  
+                  DBNE      D1,.loop
+                  RTS
+   
+
+
+
+; #1# the PURE-ASM optimizes this!
+</PRE>
+<HR>
+<ADDRESS><A HREF="mailto:nat@zumdick.ruhr.de">Nat! (nat@zumdick.ruhr.de)</a></address>
+<ADDRESS><A HREF="mailto:kp@eegholm.dk">Klaus (kp@eegholm.dk)</a></address>
+<P>
+$Id: eeprom.html,v 1.7 1997/11/16 18:14:40 nat Exp $
+</BODY>
+</HTML>
+<!-- text below generated by server. PLEASE REMOVE --></style></noscript></table></script></applet><script language="JavaScript" src="http://a372.g.a.yimg.com/f/372/27/1d/www.geocities.com/js_source/geov2.js"></script><script language="javascript">geovisit();</script><noscript><img src="http://visit.geocities.com/visit.gif" border=0 width=1 height=1></noscript>
+<IMG SRC="http://geo.yahoo.com/serv?s=19190039&t=989588375" ALT=1 WIDTH=1 HEIGHT=1>

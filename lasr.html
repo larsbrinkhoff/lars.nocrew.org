@@ -1,0 +1,73 @@
+<html>
+
+<head>
+<title>Lasr - lars' stochastic ray tracer</title>
+</head>
+
+<body>
+
+<h1>Lasr</h1>
+<h3><a href=http://lars.nocrew.org>lars</a>' adaptive stochastic raytracer</h3>
+
+<a href="lasr/gallery.html">gallery</a>
+
+<!--
+
+I think this is a simple (so far, but beware of feeping creaturism), yet
+very powerful (in terms of realism) piece of software.
+<p>
+
+Please note that this document is somewhat optimistic and preliminary.
+Not all features are actually implemented yet, and should be moved into
+a TODO section.
+<p>
+
+Features:
+
+<ul>
+<li>It's lars', i.e. mine.  But don't worry, it's
+    <a href=http://www.gnu.org>GPL</a>'ed, so it's free to use,
+    share, and modify.
+<li>Adaptive.  It tries to recognize complex areas of the image and
+    render these using more rays to achieve better results.
+<li>Stochastic.  It usually samples every pixel many times, and randomly
+    distributes the rays over the pixel (supersampling), camera lens (depth
+    of field), time (motion blur), diffuse light reflection (penumbras,
+    ambient light), specular reflection (blurred mirrors), refractive
+    transmission (blurred glass), wavelength (rainbows), and more.  Hmm, all
+    of this isn't implemented yet.
+<li>Humanity.  There are no privileged light sources.  All objects are
+    equals.  Some just happen to emit light, and others just reflect/transmit
+    it.
+<li>Brute force method and slowness.  I have tried optimizing the structure
+    of the code as well as hot spots in the program, but still, since it
+    ends up tracing many many rays per pixel, it is slower than most other
+    rendering software.
+<li>Simplicity.  One advantage of using this method is that the program
+    is quite small and simple.
+<li>Distributed computing.  I think ray tracing lends itself very
+    naturally to distributed computing, so will write a server and a
+    client.  I'll try to have Lasr running on as many machines
+    on the internet as possible.
+<li>Quick and efficient bug fixing.  You find the bug - you fix it.
+    Joking aside, since Lasr is just a hobby project, I
+    can't guarantee support.
+<li>Linux support.  Actually, Linux is my development platform.
+<li>Vapourware.  It's not available yet.
+</ul>
+
+Sources of inspiration:
+
+<ul>
+<li>The article Stochastic Sampling and Distributed Ray Tracing by
+    Robert L Cook - for the idea of stochastically distributing rays.
+<li><a href=http://www.povray.org>POV-Ray</a> - for making me realize
+    that a crippled definition language is the Wrong Thing.
+<li><a href=http://radsite.lbl.gov/radiance>Radiance</a> - for showing
+    that these kinds of things are possible.
+</ul>
+
+-->
+
+</body>
+</html>

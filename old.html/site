@@ -1,0 +1,5 @@
+case `hostname` in
+*intermec*) echo INTERMEC ;;
+junk)       echo NOCREW ;;
+*)          echo UKNOWN ;;
+esac

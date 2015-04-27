@@ -1,0 +1,76 @@
+From nobody Wed Sep 18 07:40:35 2002
+X-From-Line: sepotvin@videotron.ca Wed Sep 18 05:39:16 2002
+Received: from mail by junk.nocrew.org with spam-scanned (Exim 3.35 #1 (Debian))
+	for lars@nocrew.org
+	id 17rVgK-000258-00; Wed, 18 Sep 2002 05:39:16 +0200
+Received: from relais.videotron.ca ([24.201.245.36] helo=VL-MS-MR002.sc1.videotron.ca)
+	by junk.nocrew.org with esmtp (Exim 3.35 #1 (Debian))
+	for lars@nocrew.org
+	id 17rVgJ-0001vn-00; Wed, 18 Sep 2002 05:39:15 +0200
+Received: from hades.videotron.ca. ([24.203.254.196])
+ by VL-MS-MR002.sc1.videotron.ca
+ (iPlanet Messaging Server 5.2 HotFix 0.9 (built Jul 29 2002))
+ with ESMTP id <0H2M0068E7H84Q@VL-MS-MR002.sc1.videotron.ca> for
+ lars@nocrew.org; Tue, 17 Sep 2002 23:39:08 -0400 (EDT)
+Received: from hades.videotron.ca. (localhost [127.0.0.1])
+	by hades.videotron.ca. (8.12.5/8.12.5) with ESMTP id g8I4ZP3e039236	for
+ <lars@nocrew.org>; Wed, 18 Sep 2002 00:35:25 -0400
+Received: (from spotvin@localhost)
+	by hades.videotron.ca. (8.12.5/8.12.5/Submit) id g8I4ZOsH039235	for
+ lars@nocrew.org; Wed, 18 Sep 2002 00:35:24 -0400 (EDT)
+Date: Wed, 18 Sep 2002 00:35:24 -0400
+From: "Stephane E. Potvin" <sepotvin@videotron.ca>
+Subject: Re: FreeBSD ARM port
+In-reply-to: <857khlt4ok.fsf@junk.nocrew.org>
+To: Lars Brinkhoff <lars@nocrew.org>
+X-Gnus-Mail-Source: file:/var/mail/lars
+Message-id: <20020918043524.GA88801@hades.videotron.ca>
+MIME-version: 1.0
+Content-type: multipart/signed; boundary=IJpNTDwzlM2Ie8A6;
+ protocol="application/pgp-signature"; micalg=pgp-sha1
+Content-disposition: inline
+User-Agent: Mutt/1.4i
+References: <857khlt4ok.fsf@junk.nocrew.org>
+X-Spam-Status: No, hits=-6.5 required=5.0 tests=IN_REP_TO,PGP_SIGNATURE version=2.20
+X-Spam-Level: 
+Lines: 38
+Xref: junk.nocrew.org personal:7908
+
+
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 17, 2002 at 10:12:59AM +0200, Lars Brinkhoff wrote:
+> Hello,
+>=20
+> What's the current status of the FreeBSD ARM port?
+
+Hi,
+
+Thanks for the interest. It's unfortunately not very far yet. I can now get
+my netwinder to boot up to when it tries to start init. Unless I can get so=
+me
+help, I don't think that it will be ready before 5.0 ships out. But I hope =
+to
+have it in after that before the 6.0 release.
+
+Regards
+
+Stephane
+
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (FreeBSD)
+
+iD8DBQE9iAKMmdOXtTCX/nsRAm4nAJ0S4tRL4i0rWufORGNqYwTxaxl76ACgikx9
+GsmMeyWsg1CdzUK+E4Z0Zzs=
+=rlub
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
+

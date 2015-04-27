@@ -1,0 +1,632 @@
+<html>
+  <head>
+    <title>Architecture support in operating systems</title>
+  </head>
+  <body>
+    <p>
+      Instruction set architecture support in portable operating systems.<br>
+      Updated <modified/>.
+    </p>
+
+    <table>
+      <tr align="center" valign="bottom">
+        <th></th>
+        <th>&nbsp;&nbsp;&nbsp;</th>
+        <th colspan="4">Server/Workstation</th>
+        <th>&nbsp;&nbsp;&nbsp;</th>
+        <th colspan="3">Embedded</th>
+        <th>&nbsp;&nbsp;&nbsp;</th>
+      </tr>
+      <tr align="left" valign="bottom">
+        <th></th>
+        <th></th>
+        <th><a href="http://www.kernel.org/">Linux</a></th>
+	<th><a href="http://www.netbsd.org/">NetBSD</a></th>
+	<th><a href="http://www.openbsd.org/">OpenBSD</a></th>
+	<th><a href="http://www.freebsd.org/">FreeBSD</a></th>
+	<th></th>
+	<th><a href="http://ecos.sourceware.org/">eCos</a></th>
+	<th><a href="http://www.microsoft.com/windows/embedded/ce/">Windows CE</a></th>
+	<th><a href="http://www.uclinux.org/">uClinux</a></th>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td>AIS<sup><font size="-2">1</font></sup></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>0</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.alpha-processor.com/">Alpha</a></td>
+        <td></td>
+        <td><a href="http://www.linuxalpha.org/">yes</a></td>
+        <td><a href="http://www.netbsd.org/Ports/alpha/">yes</a></td>
+        <td><a href="http://www.openbsd.org/alpha.html">yes</a></td>
+        <td><a href="http://www.freebsd.org/platforms/alpha.html">yes</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>4</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.amd64.org/">AMD64</a></td>
+        <td></td>
+        <td><a href="http://www.amd64.org/">yes</a></td>
+        <td><a href="http://www.netbsd.org/Ports/amd64/">yes</a></td>
+        <td><a href="http://www.openbsd.org/amd64.html">yes</a></td>
+        <td><a href="http://www.freebsd.org/platforms/amd64.html">yes</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>4</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.arm.com/">ARM</a></td>
+        <td></td>
+        <td><a href="http://www.arm.linux.org.uk/">yes</a></td>
+        <td><a href="http://www.netbsd.org/Ports/arm32/">yes</a></td>
+        <td><a href="http://www.openbsd.org/armish.html">yes</a></td>
+        <td><a href="http://www.freebsd.org/platforms/arm.html">soon</a></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#ARM">yes</a></td>
+	<td><a href="http://www.microsoft.com/windows/embedded/ce.net/evaluation/hardware/processors.asp#ARM">yes</a></td>
+	<td><a href="http://www.aplio.com/B/B2111.htm">yes</a></td>
+	<td></td>
+	<td>6<sup><font size="-2">+</font></sup></td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.atmel.com/products/AVR32/">AVR32</a></td>
+        <td></td>
+        <td><a href="http://avr32linux.org">yes</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>1<sup><font size="-2">+</font></sup></td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.motorola.com/coldfire">ColdFire</a></td>
+        <td></td>
+        <td><a href="http://lxr.linux.no/source/arch/m68knommu/platform/?v=2.6.1">yes</a></td>
+	<td></td>
+        <td><a href="http://www.stallion.com/html/support/bsdcon-paper.html">yes</a>?</td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td><a href="http://www.uclinux.org/ports/coldfire/">yes</a></td>
+	<td></td>
+	<td>2</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://developer.axis.com/products/etrax100lx/">CRIS</a></td>
+        <td></td>
+        <td><a href="http://developer.axis.com/software/linux/">yes</a></td>
+	<td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td><a href="http://www.developer.axis.com/software/elinux/">yes</a></td>
+	<td></td>
+	<td>2</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.fme.fujitsu.com/products/micro/32bit/index.html">FR</a></td>
+        <td></td>
+	<td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>0</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://developer.intel.com/design/i960/">i960</a></td>
+        <td></td>
+	<td></td>
+        <td><a href="http://www.netbsd.org/Ports/#suggested-other">no</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>
+	  <!-- <a href="http://www.cse.ogi.edu/~kma/uClinux.html">yes</a> -->
+	  <a href="http://cvs.uclinux.org/cgi-bin/cvsweb/uClinux-2.0.x/arch/i960/">yes</a>?
+        </td>
+	<td></td>
+	<td>0</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://semiconductor.hitachi.com/H8/">H8</a></td>
+        <td></td>
+	<td><a href="http://lwn.net/Articles/29489/">yes</a></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td><a href="http://ecos.sourceware.org/hardware.html#H8">yes</a></td>
+	<td></td>
+	<td><a href="http://www.uclinux.org/pub/uClinux/ports/h8/">yes</a></td>
+	<td></td>
+	<td>3</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.as400.ibm.com/developer/factory/porting/arch400.html">IMPI</a><sup><font size="-2">2</font></sup></td>
+        <td></td>
+	<td><a href="http://web.archive.org/web/20011031025653/http://users.snip.net/~gbooker/as400.htm">no</a></td>
+        <td><a href="http://www.netbsd.org/Ports/#suggested-other">no</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>0</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://developer.intel.com/design/itanium/">IPF</a><sup><font size="-2">3</font></sup></td>
+        <td></td>
+        <td><a href="http://www.linuxia64.org/">yes</a></td>
+        <td></td>
+        <td></td>
+        <td><a href="http://www.freebsd.org/platforms/ia64/">yes</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>2</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.renesas.com/eng/products/mpumcu/32bit/m32r/">M32R</a></td>
+        <td></td>
+        <td><a href="http://www.linuxsymposium.org/2003/view_abstract.php?talk=42">yes</a><sup><font size="-2">4</font></sup></td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>1</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.motorola.com/coldfire">M68000</a></td>
+        <td></td>
+        <td><a href="http://www.linux-m68k.org/">yes</a></td>
+        <td><a href="http://www.netbsd.org/Ports/sun2/">yes</a></td>
+        <td><a href="http://www.openbsd.org/amiga.html">yes</a></td>
+	<td></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#M68K">yes</a></td>
+	<td></td>
+	<td>yes</td>
+	<td></td>
+	<td>4</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td>M88000</td>
+        <td></td>
+        <td></td>
+        <td><a href="http://www.netbsd.org/Ports/#suggested-m88k">no</a></td>
+        <td><a href="http://www.openbsd.org/mvme88k.html">yes</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>1</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.xilinx.com/xlnx/xil_prodcat_product.jsp?title=microblaze">MicroBlaze</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td><a href="http://www.uclinux.org/pub/uClinux/ports/microblaze/">yes</a></td>
+	<td></td>
+	<td>1</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.mips.com/">MIPS</a></td>
+        <td></td>
+        <td><a href="http://www.linux-mips.org/">yes</a>*</td>
+        <td><a href="http://www.netbsd.org/Ports/pmax/">yes</a></td>
+        <td><a href="http://www.openbsd.org/pmax.html">yes</a></td>
+        <td><a href="http://www.freebsd.org/platforms/mips.html">soon</a></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#MIPS">yes</a></td>
+	<td><a href="http://www.microsoft.com/windows/embedded/ce.net/evaluation/hardware/processors.asp#MIPS">yes</a></td>
+	<td></td>
+	<td></td>
+	<td>5</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td>MIPS16</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>0</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.semicon.panasonic.co.jp/e-micom/catalog/mn10300.htm">MN10300</a></td>
+        <td></td>
+        <td><a href="http://gcc.gnu.org/ml/gcc/2002-01/msg00184.html">yes</a>?</td>
+        <td></td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#Matsushita%20AM3x">yes</a></td>
+	<td><a href="http://www.microsoft.com/windows/embedded/ce/downloads/addons/cpu/#AM33">yes</a></td>
+	<td></td>
+	<td></td>
+	<td>2</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.national.com/catalog/Microprocessor.html">NS32000</a></td>
+        <td></td>
+        <td></td>
+        <td><a href="http://www.netbsd.org/Ports/pc532/">yes</a></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>1</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.altera.com/products/devices/nios/nios-index.html">Nios</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td><a href="http://www.microtronix.com/linux_development.html">yes</a></td>
+	<td></td>
+	<td>1</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.cpus.hp.com/technical_references/parisc.shtml">PA-RISC</a></td>
+        <td></td>
+        <td><a href="http://www.parisc-linux.org/">yes</a>*</td>
+        <td><a href="http://www.netbsd.org/Ports/hp700/">yes</a></td>
+        <td><a href="http://www.openbsd.org/hppa.html">yes</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>3</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.opencores.org/projects/or1k/">OpenRISC</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>
+	  <a href="http://cvs.uclinux.org/cgi-bin/cvsweb/uClinux-2.0.x/arch/or32/">yes</a>
+	</td>
+	<td></td>
+	<td>1</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://pdp10.nocrew.org/">PDP-10</a></td>
+        <td></td>
+        <td><a href="http://pdp10.nocrew.org/linux/">no</a></td>
+        <td><a href="http://www.netbsd.org/Ports/pdp10/">soon</a></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>0<sup><font size="-2">+</font></sup></td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td>PowerPC</td>
+        <td></td>
+        <td><a href="http://penguinppc.org/">yes</a>*</td>
+        <td><a href="http://www.netbsd.org/Ports/macppc/">yes</a></td>
+        <td><a href="http://www.openbsd.org/macppc.html">yes</a></td>
+        <td><a href="http://www.freebsd.org/platforms/ppc.html">yes</a></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#PowerPC">yes</a></td>
+	<td><a href="http://www.microsoft.com/windows/embedded/ce.net/evaluation/hardware/processors.asp#PowerPC">yes</a></td>
+	<td></td>
+	<td></td>
+	<td>6</td>
+	<td>&nbsp;&nbsp;&nbsp;</td>
+        <td>
+	  <a href="http://www.motorola.com/PowerPC/">Motorola PowerPC</a>,
+	  <a href="http://ibm.com/powerpc/">IBM PowerPC</a>
+        </td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td>ROMP</td>
+        <td></td>
+        <td></td>
+        <td><a href="http://www.netbsd.org/Ports/#suggested-other">no</a></td>
+        <td><a href="http://www.openbsd.org/romp.html">no</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>0</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://ibm.com/s390/">S/390</a></td>
+        <td></td>
+        <td><a href="http://ibm.com/s390/linux">yes</a>*</td>
+        <td><a href="http://www.netbsd.org/Ports/s390/">no</a></td>
+        <td></td>
+	<td><a href="http://tzukanov.narod.ru/freebsd390/">yes</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>2</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.superh.com/">SHcompact</a><sup><font size="-2">5</font></sup></td>
+        <td></td>
+        <td><a href="http://linuxsh.sourceforge.net/">yes</a></td>
+        <td><a href="http://www.netbsd.org/Ports/sh3/">yes</a></td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#SuperH">yes</a></td>
+	<td><a href="http://www.microsoft.com/windows/embedded/ce.net/evaluation/hardware/processors.asp#SH">yes</a></td>
+	<td></td>
+	<td></td>
+	<td>4</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.superh.com/">SHmedia</a><sup><font size="-2">6</font></sup></td>
+        <td></td>
+        <td><a href="http://www.superh-software.com/linux/">yes</a>*<sup><font size="-2">4</font></sup></td>
+        <td><a href="http://www.netbsd.org/Ports/sh5/">yes</a>*</td>
+        <td></td>
+        <td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>2</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.sparc.org/">SPARC</a></td>
+        <td></td>
+        <td><a href="http://www.ultralinux.org/">yes</a>*</td>
+        <td><a href="http://www.netbsd.org/Ports/sparc/">yes</a>*</td>
+        <td><a href="http://www.openbsd.org/sparc.html">yes</a>*</td>
+        <td><a href="http://www.freebsd.org/platforms/sparc.html">yes</a></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#SPARC">yes</a></td>
+	<td></td>
+	<td><a href="http://cvs.uclinux.org/cgi-bin/cvsweb/uClinux-2.0.x/arch/sparcnommu/">yes</a></td>
+	<td></td>
+	<td>6</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://www.necel.com/microcontrollers/32bit.cfm/">V800</a></td>
+        <td></td>
+        <td><a href="http://lxr.linux.no/source/arch/v850/README?v=2.5.46">yes</a></td>
+        <td><a href="http://www.netbsd.org/Ports/#suggested-other">no</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#NEC%20V8xx">yes</a></td>
+	<td></td>
+	<td><a href="http://www.ic.nec.co.jp/micro/uclinux/eng/">yes</a></td>
+	<td></td>
+	<td>3</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://h18002.www1.hp.com/alphaserver/vax/">VAX</a></td>
+        <td></td>
+        <td><a href="http://www.linux-vax.org/">yes</a><sup><font size="-2">4</font></sup></td>
+        <td><a href="http://www.netbsd.org/Ports/vax/">yes</a></td>
+        <td><a href="http://www.openbsd.org/vax.html">yes</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>3</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td><a href="http://developer.intel.com/design/processor/">x86</a></td>
+        <td></td>
+        <td><a href="http://www.kernel.org/">yes</a></td>
+        <td><a href="http://www.netbsd.org/Ports/i386/">yes</a></td>
+        <td><a href="http://www.openbsd.org/i386.html">yes</a></td>
+        <td><a href="http://www.freebsd.org/platforms/">yes</a></td>
+	<td></td>
+	<td><a href="http://sources.redhat.com/ecos/hardware.html#IA32">yes</a></td>
+	<td><a href="http://www.microsoft.com/windows/embedded/ce.net/evaluation/hardware/processors.asp#x86">yes</a></td>
+	<td></td>
+	<td></td>
+	<td>6</td>
+      </tr>
+      <tr align="left" valign="bottom">
+        <td></td>
+        <td></td>
+        <td>20</td>
+        <td>13<sup><font size="-2">+</font></sup></td>
+        <td>10</td>
+        <td>7<sup><font size="-2">+</font></sup></td>
+	<td></td>
+	<td>10</td>
+	<td>6</td>
+	<td>10</td>
+      </tr>
+    </table>
+
+    <p>
+      Notes:<br>
+      + Soon to be increased.<br>
+      ? Unconfirmed, not included in the total count.<br>
+      * Both 32-bit and 64-bit support.<br>
+      1 The Alternative Instruction Set in
+        <a href="http://www.viatech.com/en/viac3/c3.jsp">VIA's new C3
+	processor</a>.<br>
+      2 The CISC layer in old AS/400 machines.<br>
+      3 Itanium Processor Family, formerly IA-64.<br>
+      4 Not yet merged into Linus' tree.<br>
+      5 Old 16-bit SuperH instruction set.<br>
+      6 New 32-bit SuperH instruction set, introduced in SH5.<br>
+    </p>
+
+<!--
+    <p>
+      Architectural variations:<br>
+    </p>
+
+    <ul>
+      <li>
+        32-bit addressing - 64-bit addressing.<br>
+        Little-endian - big-endian.
+	<p>
+	  Not counted as different architectures.
+	</p>
+      </li>
+      <li>
+        ARM - Thumb<br>
+        MIPS - MIPS16<br>
+        SHcompact - SHmedia
+	<p>
+	  16-bit subsets of 32-bit instruction sets are counted as
+	  different architectures.
+	</p>
+      </li>
+      <li>
+        M68000 - ColdFire
+	<p>
+	  Minor variations, but counted as different architectures.
+	</p>
+      </li>
+      <li>
+        x86 - x86-64
+	<p>
+	  Many architectural enhancement (twice as many registers,
+	  pc-relative addressing, etc), so counted as different
+	  architectures.
+	</p>
+      </li>
+    </ul>
+-->
+
+    <p>
+      Introduction of 64-bit architectures:
+    </p>
+
+    <table>
+      <tr>
+        <th>Architecture</th>
+        <th>Processor</th>
+        <th>Introduction</th>
+      </tr>
+      <tr>
+        <td>MIPS</td>
+        <td>R4000</td>
+        <td>
+	  <a href="http://www.mips.com/content/Corporate/AboutUs/Highlights">1991?</a>
+	</td>
+      </td>
+      <tr>
+        <td>Alpha</td>
+        <td>21064</td>
+        <td><a href="http://www.hpl.hp.com/hpjournal/dtj/vol7num1/foreword.htm">1992</a></td>
+      </td>
+      <tr>
+        <td>SPARC</td>
+        <td>UltraSPARC</td>
+        <td><a href="http://www.sun.com/960101/cover/timeline.html">November 1995</a></td>
+      </td>
+      <tr>
+        <td>PA-RISC</td>
+        <td>PA-8000</td>
+        <td><a href="http://cpus.hp.com/technical_references/">June 1996</a></td>
+      </td>
+      <tr>
+        <td>PowerPC</td>
+        <td>RS64</td>
+        <td><a href="http://ibm.com/servers/esdd/articles/gauss_bench/">September 1997</a></td>
+      </td>
+      <tr>
+        <td>z/Architecture</td>
+        <td>z900</td>
+        <td><a href="http://ibm.com/press/prnews.nsf/jan/BCA6AFF60A355964852569B5005361C4">December 2000</a></td>
+      </td>
+      <tr>
+        <td>IPF</td>
+        <td>Itanium</td>
+        <td><a href="http://www.intel.com/pressroom/archive/releases/20010529comp.htm">June 2001?</a></td>
+      </td>
+      <tr>
+        <td>SuperH</td>
+        <td>SH5-100</td>
+        <td><a href="http://www.superh.com/press_releases/sh5_for%20licensing.htm">February 2002</a></td>
+      </td>
+p      <tr>
+        <td>AMD64</td>
+        <td>Opteron 24x</td>
+        <td><a href="http://www.amd.com/us-en/Weblets/0,,7832_8366_7595~69678,00.html">April 2003</a></td>
+      </td>
+    </table>
+
+  </body>
+</html>

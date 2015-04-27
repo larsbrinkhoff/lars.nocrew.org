@@ -1,0 +1,1454 @@
+<HTML>
+<! $Id: risc_doc.html,v 1.35 1997/11/16 18:14:42 nat Exp $>
+<HEAD>
+<TITLE>GPU/DSP</TITLE>
+</HEAD>
+<BODY background="jaguar_blur.gif">
+<PRE>
+# -------------------------------------------------------------------
+# GPU/DSP                               (c) Copyright 1995 KKP & Nat!
+# -------------------------------------------------------------------
+# These are some of the results/guesses that Klaus and I (Nat!) found
+# out about the Jaguar with a few helpful hints by other people, 
+# who'd prefer to remain anonymous and Bastian Schick, who could
+# care less.
+#
+# Since we are not under NDA or anything from Atari we feel free to 
+# give this to you for educational purposes only.
+#
+# Please note, that this is not official documentation from Atari
+# or derived work thereof (both of us have never seen the Atari docs)
+# and Atari isn't connected with this in any way.
+#
+# Please use this informationphile as a starting point for your own
+# exploration and not as a reference. If you find anything inaccurate,
+# missing, needing more explanation etc. by all means please write
+# to us:
+#    nat@zumdick.ruhr.de
+# or
+#    kp@eegholm.dk
+#
+# If you could do us a small favor, don't use this information for
+# those lame flamewars on r.g.v.a or the mailing list.
+#
+# HTML soon ?
+# -------------------------------------------------------------------
+# $Id: risc_doc.html,v 1.35 1997/11/16 18:14:42 nat Exp $              
+# -------------------------------------------------------------------
+
+This contains some stuff, that is cryptic because I just incorporated 
+third source knowledge. There's quite a bit I don't understand yet :) 
+[nat/1996]
+Please note the high bullshit content when it comes to the
+description of the pipeline business. Although Klaus added a new
+theory, which sounds pretty good. Now I just need to run some check
+code....
+
+<! The next lines are HTML, ignore them if you can read this>
+</PRE>
+<DL>
+<P><LI><H3><A HREF="#RISC">RISCy Business</A></H3>
+  <P>
+   <UL>
+   <H4 align=left>GPU Registers</H4>
+   <PRE>
+   <LI>GPU Endianness         <A HREF="#G_END">G_END</A>
+   <LI>GPU Control            <A HREF="#G_CTRL">G_CTRL</A>
+   <LI>GPU Program Counter    <A HREF="#G_PC">G_PC</A>
+   <LI>GPU Flags              <A HREF="#G_FLAGS">G_FLAGS</A>
+   <LI>GPU Division Control   <A HREF="#G_DIVCTRL">G_DIVCTRL</A>
+   <LI>GPU Division Remainder <A HREF="#G_REMAIN">G_REMAIN</A>
+   <LI>GPU High Busdata       <A HREF="#G_HIDATA">G_HIDATA</A>
+   <LI>GPU Matrix Address     <A HREF="#G_MTXA">G_MTXA</A>
+   <LI>GPU Matrix Control     <A HREF="#G_MTXC">G_MTXC</A>
+   </PRE>
+   <P>
+   <H4 align=left>DSP Registers</H4>
+   <PRE>
+   <LI>DSP Endianness         <A HREF="#G_END">D_END</A>
+   <LI>DSP Control            <A HREF="#D_CTRL">D_CTRL</A>
+   <LI>DSP Program Counter    <A HREF="#G_PC">D_PC</A>
+   <LI>DSP Flags              <A HREF="#D_FLAGS">D_FLAGS</A>
+   <LI>DSP Division Control   <A HREF="#G_DIVCTRL">D_DIVCTRL</A>
+   <LI>DSP Division Remainder <A HREF="#G_REMAIN">D_REMAIN</A>
+   <LI>DSP Modulo             <A HREF="#D_MOD">D_MOD</A>
+   <LI>DSP MAC Excess Byte    <A HREF="#D_MACHI">D_MACHI</A>
+   <LI>DSP Matrix Address     <A HREF="#G_MTXA">D_MTXA</A>
+   <LI>DSP Matrix Control     <A HREF="#G_MTXC">D_MTXC</A>
+   </PRE>
+   </UL>
+
+<P><LI><H3><A HREF="#Architecture">Architecture</A></H3>
+   <P><DL>
+   <LI><A HREF="#LAS">Load an Store Unit (LAS)</A>
+   <LI><A HREF="#ALU">Arithmetic and Logic Unit  (ALU)</A>
+   <LI><A HREF="#Registers">Registers</A>
+   <LI><A HREF="#Pipeline">Pipeline</A>
+   </DL>
+
+<P><LI><H3><A HREF="#Instruction Encoding">Instruction Encoding</A></H3>
+   <P><DL>
+   <LI><A HREF="#Instruction format">Instruction format</A>
+   <LI><A HREF="#Arith. Instructions">Arith. Instructions</A>
+   <LI><A HREF="#1OP">The 1 Operand Instructions</A>
+   <LI><A HREF="#2OP">The 2 Operand Instructions</A>
+   <LI><A HREF="#MOVEI">The movei Instruction</A>
+   <LI><A HREF="#LSI">The Load & Store Instructions</A>
+   <LI><A HREF="#AMLSBWP">Addressing Modes For Load/Store Byte/Word/Phrase</A>
+   <LI><A HREF="#AMLSL">Addressing Modes For Load/Store Longword</A>
+   <LI><A HREF="#LSP">Load/Store Phrase (GPU Only)</A>
+   <LI><A HREF="#PCI">The Program Control Instructions</A>
+   <LI><A HREF="#CC">Condition Codes</A>
+   <LI><A HREF="#MODULO">Modulo Aritimetics (DSP only)</A>
+   <LI><A HREF="#MOVE">Move instructions</A>
+   <LI><A HREF="#ARITHMETIC">Arithmetic instructions</A>
+   <LI><A HREF="#LOGICAL">Logical instructions</A>
+   <LI><A HREF="#Matrix Multiplication">Matrix multiplication</A>
+   <LI><A HREF="#Restrictions">Restrictions</A>
+   </DL>
+
+<P><LI><H3><A HREF="table.html">Instructions</A></H3>
+   <DL>
+   <LI><A HREF="table.html#intro">Intro</A>
+   <P>
+   <H4 align=left>Arithmetic</H4>
+   <P><I>Addition</I>
+   <LI><A HREF="table.html#ADD">ADD</A> Addition
+   <LI><A HREF="table.html#ADDC">ADDC</A> Addition with carry
+   <LI><A HREF="table.html#ADDQ">ADDQ</A> Quick addition
+   <LI><A HREF="table.html#ADDQMOD">ADDQMOD</A>  Quick addition with modulo
+   <LI><A HREF="table.html#ADDQT">ADDQT</A> Transparent quick addition
+
+   <P><I>Subtraction</I>
+   <LI><A HREF="table.html#SUB">SUB</A> Subtraction
+   <LI><A HREF="table.html#SUBC">SUBC</A> Subtraction with carry
+   <LI><A HREF="table.html#SUBQ">SUBQ</A>  Quick subtraction
+   <LI><A HREF="table.html#SUBQMOD">SUBQMOD</A>  Quick subtraction with modulo
+   <LI><A HREF="table.html#SUBQT">SUBQT</A> Transparent quick subtraction
+
+   <P><I>Multiplication</I>
+   <LI><A HREF="table.html#MULT">MULT</A> 16 bit unsigned multiplication
+   <LI><A HREF="table.html#IMULT">IMULT</A> 16 bit signed multiplication
+   <LI><A HREF="table.html#MMULT">MMULT</A> Matrix multiplication
+
+   <P><I>Staged multiplication</I>
+   <LI><A HREF="table.html#IMULTN">IMULTN</A> Staged 16 bit signed multiplication
+   <LI><A HREF="table.html#IMACN">IMACN</A> Staged 16 bit signed multiplication + addition
+   <LI><A HREF="table.html#RESMAC">RESMAC</A> Save stage result back
+
+   <P><I>Division</I>
+   <LI><A HREF="table.html#DIV">DIV</A> 32 bit unsigned divide
+
+   <P><I>Unary arithmetic operations</I>
+   <LI><A HREF="table.html#ABS">ABS</A> Absolute value
+   <LI><A HREF="table.html#NEG">NEG</A> Negated value
+   <LI><A HREF="table.html#SAT8">SAT8</A> Saturate to 8 bit unsigned
+   <LI><A HREF="table.html#SAT16">SAT16</A> Saturate to 16 bit unsigned
+   <LI><A HREF="table.html#SAT24">SAT24</A> Saturate to 24 bit unsigned
+   <LI><A HREF="table.html#SAT16S">SAT16S</A> Saturate to 16 bit signed
+   <LI><A HREF="table.html#SAT32S">SAT32S</A> Saturate to 32 bit signed
+   </DL>
+
+   <DL>
+   <H4>Bit operations</H4>
+   <P><I>Single bit operations</I>
+   <LI><A HREF="table.html#BCLR">BCLR</A> Bit clear
+   <LI><A HREF="table.html#BSET">BSET</A> Bit set
+   <LI><A HREF="table.html#BTST">BTST</A> Bit test
+
+   <P><I>Shifts and Rotations</I>
+   <LI><A HREF="table.html#ROR">ROR</A> Rotate  
+   <LI><A HREF="table.html#RORQ">RORQ</A> Rotate  
+   <LI><A HREF="table.html#SH">SH</A> Shift right
+   <LI><A HREF="table.html#SHA">SHA</A> Arithmetic shift right  
+   <LI><A HREF="table.html#SHARQ">SHARQ</A> Arithmetic shift right
+   <LI><A HREF="table.html#SHLQ">SHLQ</A> Shift left
+
+   <P><I>Bitwise logical</I>
+   <LI><A HREF="table.html#AND">AND</A> AND  
+   <LI><A HREF="table.html#OR">OR</A> OR
+   <LI><A HREF="table.html#XOR">XOR</A> Exclusive OR
+   <LI><A HREF="table.html#NOT">NOT</A> NOT
+
+   <P><I>Funny bit operations</I>
+   <LI><A HREF="table.html#PACK">PACK</A> Pixel pack
+   <LI><A HREF="table.html#UNPACK">UNPACK</A> Pixel unpack
+   <LI><A HREF="table.html#MIRROR">MIRROR</A> Mirror
+   </DL>
+
+   <DL>
+   <H4>Compares</H4>
+   <LI><A HREF="table.html#CMP">CMP</A> Compare
+   <LI><A HREF="table.html#CMPQ">CMPQ</A> Quick compare
+   </DL>
+
+   <DL>
+   <H4>Jumps + Branches</H4>
+   <LI><A HREF="table.html#JR">JR</A> Branches (PC-relative) depending on condition code
+   <LI><A HREF="table.html#JUMP">JUMP</A> Jumps (absolute) depending on condition code
+   </DL>
+
+   <DL>
+   <H4>Transfers</H4>
+   <P><I>Register to Register</I>
+   <LI><A HREF="table.html#MOVE">MOVE</A> Simple Transfer 
+   <LI><A HREF="table.html#MOVE PC">MOVE PC</A> Move from Program Counter
+   <LI><A HREF="table.html#MOVEFA">MOVEFA</A> Move from other bank
+   <LI><A HREF="table.html#MOVETA">MOVETA</A> Move to other bank
+   <LI><A HREF="table.html#MOVEI">MOVEI</A> Move immediate 32 bit value to register
+
+   <P><I>Memory to Register</I>
+   <LI><A HREF="table.html#LOAD">LOAD</A> 32 bit read
+   <LI><A HREF="table.html#LOADW">LOADB</A> 8 bit read
+   <LI><A HREF="table.html#LOADW">LOADW</A> 16 bit read
+   <LI><A HREF="table.html#LOADP">LOADP</A> 64 bit read
+   <LI><A HREF="table.html#LOAD (R14+m),Rn">LOAD (R14+m),Rn</A> 
+   <LI><A HREF="table.html#LOAD (R15+m),Rn">LOAD (R15+m),Rn</A> 
+   <LI><A HREF="table.html#LOAD (R14+Rm),Rn">LOAD (R14+Rm),Rn</A> 
+   <LI><A HREF="table.html#LOAD (R15+Rm),Rn">LOAD (R15+Rm),Rn</A> 
+
+   <P><I>Register to Memory</I>
+   <LI><A HREF="table.html#STORE">STORE</A> 32 bit write
+   <LI><A HREF="table.html#STOREW">STOREB</A> 8 bit write
+   <LI><A HREF="table.html#STOREW">STOREW</A> 16 bit write
+   <LI><A HREF="table.html#STOREP">STOREP</A> 64 bit write
+   <LI><A HREF="table.html#STORE Rn,(R14+m)">STORE Rn,(R14+m)</A> 
+   <LI><A HREF="table.html#STORE Rn,(R15+m)">STORE Rn,(R15+m)</A> 
+   <LI><A HREF="table.html#STORE Rn,(R14+Rm)">STORE Rn,(R14+Rm)</A> 
+   <LI><A HREF="table.html#STORE Rn,(R15+Rm)">STORE Rn,(R15+Rm)</A> 
+   </DL>
+
+   <P><LI><A HREF="#NUMBERS">Instruction numbers</A>
+   <P><LI><A HREF="#Interrupts">Interrupts</A>
+   <P><LI><A HREF="#single">Single stepping</A>
+   <P><LI><A HREF="#BUGS">Bugs</A>
+</DL>
+<PRE>
+
+<A NAME="RISC"></A>
+1 RISCy Business
+=-=-=-=-=-=-=-=-=
+
+The RISC's has 2 register banks of 32 registers each. There are
+the Current and the Alternative register bank. Register R31 is the
+stack pointer and normally R0 is initilized to 0 (Zero).
+
+The PC and the STATUS registers are mapped to memory addresses, and
+modifiable by "the outside".
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                        Your friendly RISC-registers
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+When initializing certain (?) registers (I'd guess G/D_END offhand) the
+RISC will initalize low memory (the interrupt space) with default values!
+
+<A NAME="G_FLAGS"></A>
+RW: G_FLAGS ($F02100)   GPU
+~~~~~~~~~~~~~~~~~~~~~
+
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------+---+----^------+-^--------+-+------+
+1 |                unused               |aux| irq_clear | irq_enab |m|flags |
+  +-------------------------------------+---+-----------+----------+-+------+
+      31...........................16  15.14   13.....9   8......4  3  2..0
+
+flags:
+   bit 0:   zero
+   bit 1:   carry
+   bit 2:   negative
+
+   These are the GPU status flags that are set on arithmetic and logical
+   instructions.
+
+mask (m):
+   bit 3:   IMASK
+
+   Interrupt mask. If set, interrupts 1-4 are disabled.
+
+irq_enable:
+   bit 4:  IRQ 0 enable    68K Host Interrupt
+   bit 5:  IRQ 1 enable    DSP Interrupt
+   bit 6:  IRQ 2 enable    PIT TImer Interrupt
+   bit 7:  IRQ 3 enable    OP Interrupt
+   bit 8:  IRQ 4 enable    Blitter Ready Interrupt
+   
+   You can enable any of the 5 interrupts by setting the appropriate
+   bit. (?)
+
+irq_clear:
+   bit 9:  IRQ 0 clear     68K Host Interrupt
+   bit 10: IRQ 1 clear     DSP Interrupt
+   bit 11: IRQ 2 clear     PIT Timer Interrupt
+   bit 12: IRQ 3 clear     OP Interrupt
+   bit 13: IRQ 4 clear     Blitter Ready Interrupt
+
+   When through with an interrupt processing, you probably have to clear
+   the IRQ by clearing/setting the appropriate bit here. (?)
+
+aux:
+   bit 14:  register bank selection
+   bit 15:  priority
+
+   Switching between the registerbanks is done like this:
+
+      movei   #G_FLAGS,r1       ; Status flags
+         or
+      movei   #D_FLAGS,r1       ; Status flags
+      load    (r1),r0
+      bset    #14,r0
+      store   r0,(r1)           ; Switch the GPU/DSP to bank 1
+
+   Normally the RISC should run on Bank 1, since on an IRQ Bank 0
+   becomes automatically active. 
+
+   bit 15 seems to control the way the GPU load/store instructions
+   access memory. If set they run at DMA priority. If cleared ??
+
+
+<A NAME="D_FLAGS"></A>
+RW: D_FLAGS ($F1A100)   DSP
+~~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^-----+--+---+----^------+-^--------+-+------+
+1 |                unused            |ix|aux| irq_pend  | irq_enab |m|flags |
+  +----------------------------------+--+---+-----------+----------+-+------+
+      31.......................18  17.16 15.14  13...9    8......4  3  2..0
+
+   This register is almost the same as G_FLAGS of the GPU so refer to
+   this register for more detailed information.
+
+flags:
+   bit 0:   zero
+   bit 1:   carry
+   bit 2:   negative
+
+
+mask (m):
+   bit 3:   IMASK
+
+irq_enable:
+   bit 4:  IRQ 0 enable     68K Host Interrupt (NMI)
+   bit 5:  IRQ 1 enable     I2S Interrupt
+   bit 6:  IRQ 2 enable     PIT1 Interrupt
+   bit 7:  IRQ 3 enable     PIT2 Interrupt
+   bit 8:  IRQ 4 enable     External 0 Interrupt (Serial)
+   
+irq_clear:
+   bit 9:  IRQ 0 clear      68K Host Interrupt (NMI)
+   bit 10: IRQ 1 clear      I2S Interrupt
+   bit 11: IRQ 2 clear      PIT1 Interrupt
+   bit 12: IRQ 3 clear      PIT2 Interrupt
+   bit 13: IRQ 4 clear      External 0 Interrupt (Serial)
+
+aux:
+   bit 14:  register bank selection
+   bit 15:  unused
+
+ix:
+   bit 16: IRQ 5 enable     External 1 Interrupt (Serial)
+   bit 17: IRQ 5 clear      External 1 Interrupt (Serial)
+
+
+<A NAME="G_MTXC"></A>
+RW: G_MTXC ($F02104)    GPU
+~~~~~~~~~~~~~~~~~~~~
+RW: D_MTXC ($F1A104)    DSP
+~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------^--------^--------^-----+--+--------+
+1 |                          unused                             | t|  size  |
+  +-------------------------------------------------------------+--+--------+
+     31......................................................5    4  3....0
+
+size:
+   bits 0-3:   size as a binary number
+
+   Size of one row of the matrix.
+
+type  (t):
+   bit 4:      row order
+
+   Specify whether your matrix is Row Major (0) or Column Major (1).
+
+
+<A NAME="G_MTXA"></A>
+RW: G_MTXA ($F02108)    GPU      Metaxa ? 
+~~~~~~~~~~~~~~~~~~~~
+RW: D_MTXA ($F1A108)    DSP
+~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------^--------^--------^--------^--------+
+1 |                                  address                                |
+  +-------------------------------------------------------------------------+
+   
+  Points to the matrix in local memory.
+
+
+<A NAME="G_END"></A>
+RW: G_END ($F0210C)     GPU
+~~~~~~~~~~~~~~~~~~~
+RW: D_END ($F1A10C)     DSP
+~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------^--------^--------^--------^--+-----+
+1 |                                unused                             |endi |
+  +-------------------------------------------------------------------+-----+
+     31............................................................3   2...0
+
+endi:
+   bit #0:   32 bit accesses are BIGENDIAN
+   bit #1:   single bits are BIGENDIAN
+   bit #2:   16 bit accesses are BIGENDIAN
+
+   Configure the endianness of the GPU/DSP with this register. How ??
+
+   Well write a $00070007 here.
+   Default value: $00070007
+
+   With this setting the internal register organization will be LSW MSW!
+   In effect:
+         movei    #$00FF0000,r0
+         movei    #BORD,r1
+         store    r0,(r1)
+
+   will put the border color to blue, but
+
+         move.l   #$00FF0000,d0
+         move.l   #BORD,a0
+         move.l   d0,(a0)
+
+   will put it to red. 
+
+   The idea of using $00070007 is that no matter how messed up the endian
+   register is, it should work. (Actually $FFFFFFFFF would be even better :))
+   Writing to this register will setup some values in G_RAM, so be careful!
+
+
+<A NAME="G_PC"></A>
+RW: G_PC ($F02110)    GPU      
+~~~~~~~~~~~~~~~~~~
+RW: D_PC ($F1A110)    DSP
+~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------^--------^--------^--------^--------+
+1 |                                    pc                                   |
+  +-------------------------------------------------------------------------+
+
+pc:
+   program counter of the RISC. I suspect that writing into this register 
+   while the RISC is running is not the best idea. Actually you can't
+   the GPU must be stopped (not even single stepping) when you want to
+   change this register.
+   When single stepping this register contains the address of the next
+   to be executed instruction minus 2.
+
+
+<A NAME="G_CTRL"></A>
+RW: G_CTRL ($F02114)    GPU
+~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^-----+--^--------+--+-----^---+--+-^--------+
+1 |                      unused      |i5| version| h| irq_lat | d| control  |
+  +----------------------------------+--+--------+--+---------+--+----------+
+     31..........................17   16  15..12  11  10....6   5  4......0
+control:
+   bit 0:   start the GPU / run status
+   bit 1:   interrupt the 68K 
+   bit 2:   generate a GPU level 0 interrupt (from the outside)
+   bit 3:   enable single step   / single step status
+   bit 4:   perform a single step
+
+Setting bit 0 starts the GPU. When reading this register this bit will
+tell you whether the GPU is running or not. (You can't go wrong starting 
+the GPU with setting bits 0 and 4 (keeping bit 3 cleared), but bit 0 
+is sufficient!) 
+Stop the GPU by clearing this bit. This will lose the internal processor 
+state though. You can not turn the GPU on and off and expect that the 
+processor will resume execution properly. (It will though most of the 
+time)
+
+Perform singlestepping by setting bit #3 and bit#0 and then stepping 
+through the instructions by setting bit #4 and bit #0 for each 
+subsequent step. 
+
+From the 'inside' setting bit #3 in a running system, will suspend 
+processing. 
+
+You can generate an interrupt for the 68k by setting bit 1. (Does it
+also interrupt the DSP ??). With bit 2 the 68K can generate an interrupt
+for the GPU.
+
+Predictably though you can't do a 
+
+      move.l   #4,G_CTRL 
+
+since this would turn off the GPU. Better use   
+
+      move.l   #5,G_CTRL
+
+If you set the interrupt by setting bit #2 on a single stepping RISC
+and run (not singlesstep) at the same time, the effect will be that 
+two instructions will be executed first before the IRQ is being processed.
+If you set bit #2 first and then on a second access start the RISC, your
+IRQ will be processed immediately before the next instructions are
+executed. (hmm, wink, wink, hmmm)
+
+dma (d):
+   bit 5:   set external DMA ACK (?)
+
+int_lat:
+   bit 6:   IRQ 0 pending  68K Host Interrupt   (NMI)
+   bit 7:   IRQ 1 pending  DSP Interrupt
+   bit 8:   IRQ 2 pending  PIT TImer Interrupt
+   bit 9:   IRQ 3 pending  OP Interrupt
+   bit 10:  IRQ 4 pending  Blitter Interrupt
+
+   While executing an IRQ you can look at these values to see, which
+   other IRQs are pending. The one your processing will also be set to on.
+   If you can clear these at all (normally they are cleared by setting
+   the appropriate clear bit in G/D_FLAGS) then only by setting them.
+
+bus_hog (h) :
+   bit 11:  hog mode on
+
+   Allows the GPU to 'hog' the bus. When the GPU code uses a lot of 
+   load/store instructions consecutively it could be that the OP does
+   not get enough time to do its processing. Use with care.
+
+version :
+   bit 12-15:  version of the GPU   (currently 0010)
+
+irq_5 (i5):
+   bitf 16:    some sort of external IRQ enable (unknown)
+
+
+<A NAME="D_CTRL"></A>
+RW: D_CTRL ($F1A114)    DSP
+~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------^--------^--+-----^---+--+-^--------+
+1 |                      unused                     | irq_lat |u | control  |
+  +-------------------------------------------------+---------+--+----------+
+     31...........................................11  10....6  5   4......0
+
+control:
+   bit 0:   start the DSP/DSP / run status
+   bit 1:   unused (?)
+   bit 2:   generate a DSP level 0 (??) interrupt 
+   bit 3:   enable single step
+   bit 4:   perform a single step
+
+Just the same as G_CTRL go read about it there.
+
+int_lat:
+   bit 6:   IRQ 0 pending   
+   bit 7:   IRQ 1 pending     Sound IRQ
+   bit 8:   IRQ 2 pending 
+   bit 9:   IRQ 3 pending     
+   bit 10:  IRQ 4 pending  
+
+   Clear the respective interrupt by setting it.
+
+
+<A NAME="G_HIDATA"></A>
+RW: G_HIDATA ($F02118)  GPU
+~~~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------+--------^--------^--------^--------+
+1 |                                 high_lword                              |
+  +-------------------------------------+-----------------------------------+
+
+high_lword:
+   The rest of the phrase that doesn't fit into a GPU register, when 
+   using the "loadp" or "storep" instructions. Possibly also used by the
+   MAC instructions for the "hi" byte. (See D_MACHI)
+
+
+<A NAME="D_MOD"></A>
+RW: D_MOD ($F1A118)     DSP
+~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------+--------^--------^--------^--------+
+1 |                                    mask                                 |
+  +-------------------------------------+-----------------------------------+
+
+mask:
+   Mask to be used by the ADDQMOD and SUBQMOD instructions. Create your own
+   circular buffers...
+
+
+<A NAME="G_DIVCTRL"></A>
+W: G_DIVCTRL ($F0211C)  GPU
+~~~~~~~~~~~~~~~~~~~~~~
+W: D_DIVCTRL ($F1A11C)  DSP
+~~~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------^--------^--------^--------^-----+--+
+1 |                             unknown                                  |c |
+  +----------------------------------------------------------------------+--+
+     31...............................................................1   0
+
+   This register is write only
+ 
+control (c)
+   bit #0      division control
+
+   If bit #0 is set, then the division operation will assume a unsigned (?) 
+   16.16 integer fractional representation for the divide. 
+   Else you get a straight 32 bit unsigned integer divide 
+   (like on the 68000 DIVU).
+
+
+<A NAME="G_REMAIN"></A>
+R: G_REMAIN ($F0211C)   GPU
+~~~~~~~~~~~~~~~~~~~~~   
+R: D_REMAIN ($F1A11C)   DSP
+~~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------+--------^--------^--------^--------+
+1 |               unused                |               value               |
+  +-------------------------------------+-----------------------------------+
+    31...............................16   15..............................0
+
+   This register can be read only.
+   Remainder of the division operation. Guess: only 16 bits wide.
+
+
+<A NAME="D_MACHI"></A>
+RW: D_MACHI ($F1A120)     DSP
+~~~~~~~~~~~~~~~~~~~~~
+ 32       28        24        20       16       12        8        4        0
+  +--------^---------^---------^--------^--------^--------^--------^--------+
+1 |                          unused                       |      byte       |
+  +-------------------------------------------------------------------------+
+    31..................................................8   7.............0
+
+byte:
+   high byte of MAC operations (??) 
+
+
+
+############################################################################
+
+<A NAME="Architecture"></A>
+Architecture:
+=-=-=-=-=-=-=
+
+Ingredients:
+
+GPU/DSP: two load/store units
+         one ALU
+         one divisor unit
+         various control logic for branching et.c.
+
+The GPU and the DSP are both pipeline processor, employing a 
+triple stage forwarding pipeline. The pipeline is:  (???)
+
+Stage 1:   Load   (LAS1/LAS2)
+Stage 2:   Arithmetic and Logic Unit
+Stage 3:   Store  (LAS1/LAS2)
+
+
+<A NAME="LAS"></A>
+Load an Store Unit (LAS)
+=-=-=-=-=-=-=-=-=-=-=-=
+
+The LAS aren't just called LAS because they can Load and Store,
+but because they can also Load and Store at the same time. 
+To the same register that is... Therefore writing a register
+back, still retains the register value in the LAS for usage by
+the ALU again.
+
+
+<A NAME="ALU"></A>
+Arithmetic and Logic Unit  (ALU)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+add, mult, shift all 'atomic' instruction excecute one cycle
+
+
+
+<A NAME="Registers"></A>
+Registers
+=-=-=-=-=
+
+64 registers, each 32 bits wide, stored in two banks of r0..r31
+interrupts always execute out of bank 0  (i.e. your code should
+always execute in bank 1..)
+
+Stack
+-----
+Register R31 is used by the GPU's as stack pointers. This only 
+seems to be used by interrupts. See the section on interrupts.
+
+
+<A NAME="Pipeline"></A>
+Pipeline
+=-=-=-=-=
+
+                I M P O R T A N T     N O T I C E 
+******************************************************************
+                  Don't take it as gospel (yet).
+*******************************************************************
+                I M P O R T A N T     N O T I C E 
+
+From the description about the execution units, the pipeline 
+should work this way:
+
+Instruction :   OP s,d    ; eg ADD r1,r2
+
+ALU:
+           +------+
+     S1 --&gt;|      |
+           |      |---&gt; D
+     S2 --&gt;|      |
+           +------+
+
+When instruction is in stage 1, S1 and S2 in the ALU is loaded from s & d.
+When instruction is in stage 2, the ALU function OP is executed, D is ready
+When instruction is in stage 3, the d is loaded with D
+
+Now lets examine how a normal instruction stream is executed:
+
+pipe  inst regs  operations     scoreboard
+----+-----+----+-------------+------------------
+t=0
+(3)   nop        nop
+(2)   nop        nop
+(1)   nop        nop
+( )   add r0,r1
+( )   add r2,r3
+( )   add r4,r5
+
+t=1
+(-)   nop
+(3)   nop        store nop
+(2)   nop        alu nop
+(1)   add r0,r1  S1=r0, S2=r1      | +r1
+( )   add r2,r3
+( )   add r4,r5
+
+t=2
+(-)   nop
+(3)   nop        store nop         | -
+(2)   add r0,r1  ALU:ADD S1,S2,D
+(1)   add r2,r3  S1=r2, S2=r3      | r1 +r3
+( )   add r4,r5
+( )   add r6,r7
+
+t=3
+(-)   nop
+(3)   add r0,r1  r1=D              | (-r1)
+(2)   add r2,r3  ALU:ADD S1,S2,D
+(1)   add r4,r5  S1=r4, S2=r5      | r3 +r5
+( )   add r6,r7
+( )   add r7,r9
+
+
+t=4
+(-)   nop
+(-)   add r0,r1
+(3)   add r2,r3  r3=D              | (-r3)
+(2)   add r4,r5  ALU:ADD S1,S2,D
+(1)   add r6,r7  S1=r6, S2=r7      | r5 +r7
+( )   add r7,r9
+
+
+t=5
+(-)   nop
+(-)   add r0,r1
+(-)   add r2,r3
+(3)   add r4,r5  r5=D              | (-r5)
+(2)   add r6,r7  ALU:ADD S1,S2,D
+(1)   add r7,r9  S1=r7, S2=r9      | r7 +r9 (STALL???)
+( )   nop
+
+t=6
+(-)   nop
+(-)   add r0,r1
+(-)   add r2,r3
+(-)   add r4,r5
+(3)   add r6,r7  r7=D              | (-r7)
+(2)   stall      ALU:NOP
+(1)   add r7,r9  S1=r7, S2=r9      | r9
+( )   div r0,r1
+
+t=7
+(-)   nop
+(-)   add r0,r1
+(-)   add r2,r3
+(-)   add r4,r5
+(-)   add r6,r7
+(3)   stall      store nop         |
+(2)   add r7,r9  ALU:ADD S1,S2,D
+(1)   div r0,r1  S1=r0, S2=r1      | r9 +r1
+
+
+
+Here's a few more complex example: (Thanks, you know who!)
+
+Ex 1:
+   div r0,r1;     (r1 is not available now!)
+   STALL STALL STALL*12
+   add r1,r2;    (yay, we can use r1 again :-)
+
+You could replace the STALLs with code that did not need to
+access r1 and the divison wouldn't slow you down more than
+any other instruction. (Of course a second division is 
+impossible, when the DIV unit is already in use)
+
+Ex.2:
+   nop
+   nop
+   nop                         (LS1)    (LS2)     (ALU)
+   add r0,r1                  (load  r0, load r1,  nop)
+   add r2,r3                  (load  r2, load r3,  add r0,r1)
+   add r4,r5                  (store r1, load r4,  add r2,r3
+                              (load  r5,  nop   ,  STALL)
+   add r6,r7                  (load  r6, load r7,  add r4,r5)
+   add r8,r9                  (store r5, load r8,  add r6,r7)
+                              (load  r9, nop    ,  STALL)
+   add r0,r1                  (load  r0, load r1,  add r8,r9)
+   nop                        (store r9,nop        add r0,r1)   
+   nop                        (store r1,nop        nop)
+
+
+<A NAME="Instruction Encoding"></A>
+3.0 Instruction Encoding
+=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Most instructions are only 2 bytes long. This means that 4 
+instructions can be pulled from RAM in one memory access!! This also
+makes the code extremly tight, which is of optimum concern when 
+writing cartridge based programs.
+One more than 2 byte instruction is the movei #x,Rn which have the
+32 bit constant just after the 2 byte instruction, this saves a lot
+of time and space over other RISC's. The ARM forexample uses 4 32 bit
+instructions to fill a register (8 bit at a time). The SPARC 2 32 bit
+instructions.
+
+<A NAME="Instruction format"></A>
+3.1 Instruction format
+=-=-=-=-=-=-=-=-=-=-=-
+
+All instructions uses the top 6 bits to encode the instruction.
+
+The 2 operand instructions split the remainder of the 16 bits into
+2 5 bit fields, the source (quick or register) and the destination
+register.
+
+
+<A NAME="NOP"></A>
+3.2.1 The Implied Instructions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+            iiiiii 0000000000 
+              /\       /\
+              ||       |_============== room for extensions
+              ||
+              \`======================= instruction
+
+The Implied instruction are nop!
+
+
+<A NAME="1OP"></A>
+3.2.2 The 1 Operand Instructions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+            iiiiii 00000 ddddd  &lt;====== destination register
+              /\     /\
+              ||     |_================ room for extensions
+              ||
+              \`======================= instruction
+
+The one operand instructions are:
+
+             neg    R0
+             not    R1
+             abs    R2
+             resmac R3
+
+
+
+<A NAME="2OP"></A>
+3.2.3 The 2 Operand Instructions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Most instructions are 2 operand and follow this pattern. The register
+to register instructions use the sssss and ddddd to specify source
+and destination registers, as add r1,r0. In the quick to register
+instructions the sssss field is used to hold a constant, as 
+asl #3,r0 where the constans is between 1 and 32 and moveq #0,d2
+where the constant is between 0 and 31.
+
+            iiiiii sssss ddddd  &lt;====== destination register
+              /\     /\
+              ||     |_================ source (quick or register)
+              ||
+              \`======================= instruction
+
+Examples of 2 operand instructions are:
+
+            move  R1,R2
+            bset  #31,R2
+            etc...
+
+<A NAME="MOVEI"></A>
+3.2.4 The movei Instruction
+=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+The movei instruction are very special! This instruction is the 
+only 6 byte instruction, that is what makes it special.
+The instruction word follow the general structure,
+
+            iiiiii 00000 ddddd  &lt;====== destination register
+              /\     /\
+              ||     |_================ room for extensions
+              ||
+              \`======================= instruction ($98)
+
+but the 32 bit constant that is to be loaded into the destination
+register followes the instruction
+
+           +-------------+ +------------+ +------------+
+           |   Movei Rn  | | Lower word | | Upper word |
+           +-------------+ +------------+ +------------+
+
+
+<A NAME="LSI"></A>
+3.2.5 The Load & Store Instructions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Most instructions are 2 operand and follow this pattern.
+
+            iiiiii ppppp ddddd  &lt;====== destination register
+              /\     /\
+              ||     |_================ indirect register
+              ||
+              \`======================= instruction
+
+
+<A NAME="AMLSBWP"></A>
+3.2.5.1 Addressing Modes For Load/Store Byte/Word/Phrase
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+All load and store instructions support register indirect addressing,
+which is written (Rn).
+This means that you can load the memory location pointed to by a 
+register into yet another register (or the same).
+
+
+<A NAME="AMLSL"></A>
+3.2.5.2 Addressing Modes For Load/Store Longword
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Together with the Load/Store longword instructions, there are other
+addressing modes. Called:
+
+  * indexed register indirect addressing, which is written (Rn+Rm),
+  * register indirect addressing w. offset, which is written (Rn+xx),
+
+In these addressing modes Rn _have_ to be R14 or R15!
+
+fx:          load  (r1+r2),r0
+             store r0,(r1+16)
+                    
+
+<A NAME="LSP"></A>
+3.2.5.3 Load/Store Phrase (GPU Only)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+The GPU has an direct 64 bit (Phrase) interface to the main memory.
+The loadp/storep instructions access this memorys full width.
+The lower part of the phrase pointed to by the (Rp) goes from/to the
+register specified, the other part of the phrase is in G_HIDATA
+( 0xF02118 )  /* GPU Bus Interface high data  */
+
+fx:          store r0,(rp)
+
+There are some instructions to access memory with in byte and word
+sizes. The store instruction (at least under the usual configuration)
+clears the remaining bits in the 32 bit long word accessed!! Also
+for 32 bit access be sure, that your destination address is properly
+long word aligned. 
+
+
+<A NAME="PCI"></A>
+3.2.6 The Program Control Instructions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Most Program Control instructions follow this pattern:
+
+            iiiiii ddddd ccccc  &lt;====== Condition Vector
+              /\     /\
+              ||     |_================ source (quick or register)
+              ||
+              \`======================= instruction
+
+The ddddd field can either speify an offset (jr instruction) or 
+a register containing a absolute address (jump instruction), all
+jump instructions are conditional.
+
+
+<A NAME="CC"></A>
+3.2.6.1 Condition Codes
+=-=-=-=-=-=-=-=-=-=-=-=
+
+Condition codes ccccc can be any 5 bit vector, here are some ready 
+defined usefull values:
+
+       CC (%00100    CS (%01000)   EQ (%00010)  MI (%11000)
+       NE (%00001)   PL (%10100)   HI (%00101)  T  (%00000)
+
+Examples of Program Control instructions:
+
+            jump  mi, (r5)
+            jr    ne, exit
+            jr    t, loop   ; loop forever
+            jr    loop      ; loop forever            
+            jump  (r5)
+            
+            
+<A NAME="MODULO"></A>
+3.2.7 Modulo Aritimetics (DSP only)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+The instructions addqmod and subqmod are modular with the size
+specified in the D_MOD (0xF1A118) /* DSP Modulo Instruction Mask */
+The mask register contains a mask that is applied to the register
+after the add operation, as in the following two step
+
+                    movei     #%111111,r1
+              loop: addq      #4,r0
+                    and       r1,r0
+                    ...
+                    jr        loop
+                    
+With the modulo register this can be written:
+
+                    movei     #D_MOD,r3
+                    movei     #~%111111,r1
+                    store     r1,(r3)     ;; possibly need a (?) nop here
+                    nop                   ;; because the D_MOD isn't
+              loop: addqmod   #4,r0       ;; in the scoreboard (?)
+                    ...
+                    jr        loop                 
+
+This is an obvious win! - you save a cycle each loop!
+
+Instructions are 
+                   subqmod, addqmod
+                   
+
+
+<A NAME="MOVE"></A>
+3.4   Move instructions
+=-=-=-=-=-=-=-=-=-=-=-=
+
+None of the move instructions affect the status flags of the GPU,
+except when moving data into the status register itself.
+
+MOVETA   moves from the current register bank into the shadowed
+         (alternative) register bank
+
+MOVEFA   moves from the shadowed register bank into the currently
+         accessible bank
+
+
+<A NAME="ARITHMETIC"></A>
+3.5   Arithmetic instructions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+ABS      sets the carry flag if a negative value was transformed to a 
+         positive else clears it
+
+ADDQT    does not affect the status flags
+
+DIV      takes 16 cyles to execute. Supposedly you can do either
+         16.16 integer, fractional division or 32 bit integer
+         division. The DIV does a 2 bit divide each cycle, hence 16
+         cycles total for 32 bit. The remainder of the divison is 
+         saved in a special register.
+
+IMACN    they don't have a register write back (so they're easier to
+         optimize) and you'll find if you get in the habit of using 
+         them, you can normally structure your code a bit faster by 
+         using them..
+
+
+<A NAME="LOGICAL"></A>
+3.6   Logical instructions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+SH    affects the status flags
+SHA   affects the status flags
+SHLQ  affects the status flags
+SHRQ  affects the status flags
+SHARQ affects the status flags
+
+<A NAME="Matrix Multiplication"></A>
+3.7   Matrix multiplication
+=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+   MMULT    starting_register,destination_register
+         
+You have to setup the matrix control register and the matrix address
+register before executing the MMULT instruction. The MMULT instruction
+will then multiply the values contained in the interrupt (alternate ?) 
+register bank (0) starting at register "starting_register" with the 
+matrix pointed to by the matrix address register.
+
+The values used for the multiplication are 16 bit values (sign extended ?)
+and are arranged in this slightly peculiar fashion (for a 5x1 Matrix):
+
+
+               Register bank #0  (RB)
+         +-------------+------------+
+         |      1      |      0     |  Rn
+         +-------------+------------+
+         |      3      |      2     |  Rn+1
+         +-------------+------------+
+         |    unused   |      4     |  Rn+2
+         +-------------+------------+
+
+
+These values are then multiplied with a 32 bit table in memory
+and the results of these added together:
+
+
+                  Main memory    (MM)
+$020000  +--------------------------+
+         |             0            | $020003
+$020004  +--------------------------+
+         |             1            | $020007
+$020008  +--------------------------+
+         |             2            | $02000B
+$02000C  +--------------------------+
+         |             3            | $02000F
+$020010  +--------------------------+
+         |             4            | $020013
+         +--------------------------+
+
+
+   result = MM0 * RB0 + MM1 * RB1 + MM2 * RB2 + MM3 * RB3 + MM4 * RB4;
+
+The result 32 bit is stored into "destination_register" in the current 
+bank (or bank 1?).
+
+
+Brief internal description of MMULT:  strips program instruction fetchs 
+and forces instructions straight into the pipeline.. getting a through put
+of one (16 bit) multiply per tick.. (25 million per second :-)
+
+Supposedly the MMULT is performed by inserting generated instructions 
+into the instruction stream.  Supposedly for a MMULT the instructions
+inserted are a leading IMULTN, the middle ones IMACN, and finally a 
+RESMAC. 
+
+[[ 
+   ???  These have their operands modified in the manner described above. ???
+   i.e. that funky packed thingy, two elements per register, that
+   allows all of an eightxeight matrix to be stored in the secondary
+   register bank and is the "raison d'e^tre" of the second bank.. (woosh)
+]]
+
+
+<A NAME="Restrictions"></A>
+3.8 Restrictions
+=-=-=-=-=-=-=-=-=
+
+  'JR+MOVEI', 'JUMP+MOVEI', 'JR+JR', 'JR+JUMP', 'JUMP+JR', 'JUMP+JUMP',
+  'JR+MOVE PC', 'JUMP+MOVE PC' 
+
+    IMULTN must be followed by a IMACN (Error displayed)
+    IMACN must be followed by a IMACN or RESMAC (Error displayed)
+    RESMAC must be preceed by a IMACN (Error displayed)
+    a NOP is inserted between LOAD+MMULT and STORE+MMULT (Warning displayed).
+    I don't know if LOADB+MMULT, LOADW+MMULT, LOADP+MMULT, ... are valid or
+    not. Currently, it's not tested...
+
+
+
+
+
+<A NAME="NUMBERS"></A>
+5.0 Instruction numbers
+=-=-=-=-=-=-=-=-=-=-=-=
+
+   Mnemonic  Mode     iiiiii sssss ddddd  dec  Notes
+   --------------------------------------------------------------
+     ADD     Rs,Rd    000000 sssss ddddd    0
+     ADDC    Rs,Rd    000001 sssss ddddd    1
+     ADDQ    #q,Rd    000010 qqqqq ddddd    2  q is [32, 1..31]
+     ADDQT   #q,Rd    000011 qqqqq ddddd    3  q is [32, 1..31]
+
+     SUB     Rs,Rd    000100 sssss ddddd    4
+     SUBC    Rs,Rd    000101 sssss ddddd    5
+     SUBQ    #q,Rd    000110 qqqqq ddddd    6  q is [32, 1..31]
+     SUBQT   #q,Rd    000111 qqqqq ddddd    7  q is [32, 1..31]
+
+     NEG     Rd       001000 00000 ddddd    8
+     AND     Rs,Rd    001001 sssss ddddd    9
+     OR      Rs,Rd    001010 sssss ddddd   10
+     XOR     Rs,Rd    001011 sssss ddddd   11
+
+     NOT     Rd       001100 00000 ddddd   12
+     BTST    #q,Rd    001101 qqqqq ddddd   13  q is [0..31]
+     BSET    #q,Rd    001110 qqqqq ddddd   14  q is [0..31]
+     BCLR    #q,Rd    001111 qqqqq ddddd   15  q is [0..31]
+
+     MULT    Rs,Rd    010000 sssss ddddd   16
+     IMULT   Rs,Rd    010001 sssss ddddd   17
+     IMULTN  Rs,Rd    010010 sssss ddddd   18
+     RESMAC  Rd       010011 00000 ddddd   19
+
+     IMACN   Rs,Rd    010100 sssss ddddd   20
+     DIV     Rs,Rd    010101 sssss ddddd   21
+     ABS     Rd       010110 00000 ddddd   22
+     SH      Rs,Rd    010111 sssss ddddd   23
+   
+     SHLQ    #q,Rd    011000 qqqqq ddddd   24  q is [32, 1..31]
+     SHRQ    #q,Rd    011001 qqqqq ddddd   25  q is [32, 1..31]
+     SHA     Rm,Rd    011010 sssss ddddd   26
+     SHARQ   #q,Rd    011011 qqqqq ddddd   27  q is [32, 1..31]
+
+     ROR     Rs,Rd    011100 sssss ddddd   28
+     RORQ    #q,Rd    011101 qqqqq ddddd   29  q is [32, 1..31]
+     CMP     Rs,Rd    011110 sssss ddddd   30
+     CMPQ    #q,Rd    011111 qqqqq ddddd   31  q is [0..31]
+
+GPU  SAT8    Rd       100000 00000 ddddd   32
+DSP  SUBQMOD #q,Rd    100000 qqqqq ddddd   32  q is [32, 1..31]
+GPU  SAT16   Rd       100001 00000 ddddd   33
+DSP  SAT16S  Rd       100001 00000 ddddd   33
+     MOVE    Rs,Rd    100010 sssss ddddd   34
+     MOVEQ   #q,Rd    100011 qqqqq ddddd   35  q is [0..31]    
+
+     MOVETA  Rs,Rd    100100 sssss ddddd   36
+     MOVEFA  Rs,Rd    100101 sssss ddddd   37
+     MOVEI   #c32,Rd  100110 00000 ddddd   38  followed by a 32 bit const
+     LOADB   (Rp),Rd  100111 ppppp ddddd   39
+
+     LOADW   (Rp),Rd  101000 ppppp ddddd   40
+     LOAD    (Rp),Rd  101001 ppppp ddddd   41
+GPU  LOADP   (Rp),Rd  101010 ppppp ddddd   42  Load Phrase
+DSP  SAT32S  Rd       101010 00000 ddddd   42
+     LOAD  (R14+n),Rd 101011 nnnnn ddddd   43
+
+     LOAD  (R15+n),Rd 101100 nnnnn ddddd   44
+     STOREB  Rs,(Rp)  101101 ppppp sssss   45
+     STOREW  Rs,(Rp)  101110 ppppp sssss   46
+     STORE   Rs,(Rp)  101111 ppppp sssss   47
+
+GPU  STOREP  Rs,(Rp)  110000 ppppp sssss   48  Store Phrase
+DSP  MIRROR  Rs,(Rp)  110000 ppppp sssss   48
+     STORE Rs,(R14+n) 110001 nnnnn sssss   49
+     STORE Rs,(R15+n) 110010 nnnnn sssss   50
+     MOVE    PC,Rn    110011 00000 ddddd   51
+
+     JUMP    CC,(Rd)  110100 ddddd ccccc   52
+     JR      CC,q     110101 qqqqq ccccc   53
+     MMULT   Rs,Rd    110110 sssss ddddd   54
+     MTOI    Rs,Rd    110111 sssss ddddd   55
+
+     NORMI   Rs,Rd    111000 sssss ddddd   56   
+     NOP              111001 00000 00000   57
+     LOAD (R14+Ri),Rd 111010 iiiii ddddd   58
+     LOAD (R15+Ri),Rd 111011 iiiii ddddd   59
+
+    STORE Rs,(R14+Ri) 111100 iiiii sssss   60
+    STORE Rs,(R15+Ri) 111101 iiiii sssss   61
+GPU  SAT24   Rd       111110 00000 ddddd   62
+DSP  ADDQMOD #q,Rd    111111 qqqqq ddddd   63  q is [32, 1..31]
+GPU  PACK    Rd       111111 00000 ddddd   63
+GPU  UNPACK  Rd       111111 00001 ddddd   63
+
+
+
+
+<A NAME="Interrupts"></A>
+6.0 Interrupts
+=-=-=-=-=-=-=-=
+
+The GPU and the DSP uses an interupt scheme that looks a lot like
+the 56000's way of handling interupts.
+
+In the lowest part of each processors memory lie the interupt entry
+points. There are 16 bytes for each interupt to hold instructions.
+This should be enough to jump into the real interupt handler.
+
+This doesn't work like on the 56000 though, where two instructions
+are jammed into the instruction stream and a 'real' interrupt is only
+executed, when a jump instruction is encountered. The RISCs IRQ is more
+like a computed GOTO. So if you don't jump out, you will run into the
+next IRQ-handler's code.
+
+When an interrupt occurs the RISC switches to bank #0, then the current 
+PC value is pushed on to the stack (or anything r31 is pointing to). 
+This is not the value you want to return to though, but instead you want 
+to add the length of the instruction to it. (Well I'd guess MOVEIs are 
+uninterruptable, or you'd be in deep shit, so add 2 to the value). 
+
+I am not sure how the RISC finds out that a IRQ routine is over (maybe
+a compare of the JUMP address with the IRQ address ?), but it will and
+it will then switch the banks for you automatically.
+ 
+You should specifically note, that none of the GPU/DSP memory mapped
+registers are saved, like f.e. the G_FLAGS register with the condition
+codes. Therefore, if you don't want to save those registers you should
+restrict your interrupt instructions to those, that don't modify the 
+condition codes. 
+Be extra careful with divisions and multiplications, some of the
+GPU/DSP registers have multiple uses. Plain don't use interrupts when 
+doing matrix multiplication.
+
+
+      
+For the DSP it looks like this:
+
+000000        Host control interupt
+000010        I2S Interupt (Sound)
+
+
+Enable interupts I2S:
+
+   movei #D_FLAGS,r1    ; load dsp flags to go to bank 1
+   load  (r1),r0
+   bclr  #3,r0          ; clear IMASK
+   bset  #5,r0          ; enable I2S interrupt
+   store r0,(r1)        ; save dsp flags
+
+
+Handle i2s interupts:      [ NOTE: this code has been deobfuscated 
+                                   and worsened since v1.11 ]
+   .org  $10
+
+   movei #i2s_isr,r30
+   jump  T,(r30)
+   nop                  ; pad to 8 words total
+   nop
+   nop
+
+;; actual service routine
+i2s_isr:
+   movei #D_FLAGS,r30   ; get flags ptr
+   load  (r30),r29      ; yup
+
+   bclr  #3,r29         ; clear IMASK
+   bset  #10,r29        ; clear I2S interrupt
+   bset  #14,r29        ; prepare switch back to bank #1 (VOODOO)
+
+   load  (r31),r28      ; get last instruction address
+   addq  #4,r31         ; update the stack pointer
+
+   addq  #2,r28         ; point at next to be executed
+
+   ...                  ; do some stuff
+
+   jump  T,(r28)        ; and return      
+   store r29,(r30)      ; restore flags   
+   nop                  ; VOODOO against external LOAD
+   nop                  ; more VOODOO - but better do it
+   
+
+<A NAME="single"></A>
+7.0   Singlestepping
+=-=-=-=-=-=-=-=-=-=-=
+
+[ Thanks go to Bastian Schick for this ]
+
+If you are doing singlestepping you don't have to worry about the pipeline,
+because it will not be used by the processor. Only the current instruction
+is worked on (completely). You start the first instruction in your single-
+stepping sequence with 0x9 (Run + Singlestep) and wait for the status to
+have bit #3 set. Each subsequent step is performed with 0x11 (Run + Step). 
+If you want to run a routine inbetween steps, you can but you must preserve 
+the context. Afterwards continue with above steps (0x9 then 0x11 into CTRL).
+
+Always remember that the RISC must be OFF to affect the PC register. 
+
+
+<A NAME="BUGS"></A>
+BUGS:
+=-=-=
+
+There are also apparently some bugs in the GPU/DSP that you should be 
+aware of:
+
+1) INDEXED STORES NEVER STALL
+  e.g
+     div r0,r3
+     store r3,(r14+6)
+
+   should be
+
+     div r0,r3
+     or r3,r3
+     store r3,(r14+6)
+
+   Here the OR is used to 'touch' the register for the scoreboard. If you 
+   wouldn't touch the r3 register you would most likely (but not always,
+   think of those IRQs!) write the old value of r3 back.
+
+
+2) TWO CONSECUTIVE WRITES TO THE SAME REGISTER MIGHT BE PROBLEMATIC
+
+   Although writing code like this is a bug anyway, you should be careful
+   that if you write to same reg with no intermittent read, and the
+   second instruction finishes first garbage will result:
+
+      load  (r3),r2
+      moveq #3,r2
+
+should be
+      load  (r3),r2
+      or    r2,r2
+      moveq #3,r2
+
+
+3)  NEITHER THE DSP NOR THE GPU CAN EXECUTE 'jr' OR 'jump' FROM EXTERNAL
+    RAM
+
+4)  NEITHER THE DSP NOR THE GPU MAY BE USED IN HIGH PRIORITY 
+
+5)  A mmult INSTRUCTION MUST NEVER BE INTERRUPTED
+    how very convenient...
+
+6)  THE DSP (ONLY) MUST NOT DO AN EXTERNAL WRITE UNLESS PRECEDED BY AN 
+    EXTERNAL READ THAT COMPLETES BEFORE THE WRITE STARTS.
+
+    The saying goes, that this bug is only spurious and can remain 
+    undetected for quite some time.
+    Hint for external I/O use the Blitter (as always :))
+
+   e.g.
+   A:
+      load  (r1),r2
+      or    r10,r11
+      store r11,(r3)
+
+   B:
+     load   (r1),r2
+     or     r2,11
+     store  r11,(r3)
+
+   C:
+     load   (r1),r2
+     or     r2,r2
+     or     r10,r11
+     store  r11,(r3)
+
+   [A] will no work but [B] will, this is because the result of the load 
+   is required for the 'or' operation to be performed. To make [A] work, 
+   change it to [C]...
+</PRE>
+<HR>
+<ADDRESS><A HREF="mailto:nat@zumdick.ruhr.de">Nat! (nat@zumdick.ruhr.de)</a></address>
+<ADDRESS><A HREF="mailto:kp@eegholm.dk">Klaus (kp@eegholm.dk)</a></address>
+<P>
+$Id: risc_doc.html,v 1.35 1997/11/16 18:14:42 nat Exp $
+</BODY>
+</HTML>
+
+<!-- text below generated by server. PLEASE REMOVE --></style></noscript></table></script></applet><script language="JavaScript" src="http://a372.g.a.yimg.com/f/372/27/1d/www.geocities.com/js_source/geov2.js"></script><script language="javascript">geovisit();</script><noscript><img src="http://visit.geocities.com/visit.gif" border=0 width=1 height=1></noscript>
+<IMG SRC="http://geo.yahoo.com/serv?s=19190039&t=989588364" ALT=1 WIDTH=1 HEIGHT=1>

@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="en">
+
+  <head>
+  <title>Lisp tags</title>
+  </head>
+
+  <body bgcolor="#ffffff">
+
+    <table width="80%" align="center" summary="page content">
+      <tr>
+	<td colspan="2">
+	  <center><h1>Lisp tags</h1></center>
+
+	  <p>Type tags embedded in pointers used in Common Lisp
+	  implementations.</p>
+
+	  <p><font size="-1">Note: this is not yet verified to be
+	  completely correct.</font></p>
+	  <hr noshade>
+	</td>
+      </tr>
+      <tr>
+        <td valign="top" width="50%">
+	  <p><b>Allegro CL</b></p>
+
+	  <p>(32-bit)
+	  <pre>
+...xx fixnum
+	  </pre>
+	  </p>
+
+	  <p>(64-bit)
+	  <pre>
+...xxx fixnum
+	  </pre>
+	  </p>
+
+	  <p><b>Armed Bear Lisp</b></p>
+
+	  <p>No type information in pointers.</p>
+
+	  <p><b>CMUCL</b></p>
+
+	  <pre>
+...00 fixnum
+..001 function
+...10 other immediate
+..011 list
+..101 structure pointer
+..111 other pointer
+	  </pre>
+
+	  <p><b>Corman Lisp</b></p>
+
+	  <pre>
+......000 fixnum
+......001 immediate
+.00000001 character
+......010 forwarding tag
+.......11 short float
+......100 cons
+......101 uvector pointer
+......110 uvector header
+	  </pre>
+
+	  <p><b>CLISP</b></p>
+
+	  <p>(varies)  
+	  <pre>
+...xxxxxxx type code
+	  </pre>
+	  </p>
+
+	  <p><b>ECL</b></p>
+
+	  <pre>
+...00 pointer
+...01 fixnum
+...10 character
+	  </pre>
+
+	  <p><b>GCL</b></p>
+
+	  <p>No type information in pointers.</p>
+
+	  <p><b>Liquid CL</b></p>
+
+	  <pre>
+...00010110 character
+	  </pre>
+	</td>
+	<td valign="top">
+	  <p><b>Lisp500</b> <i>(not a full CL implementation)</i></p>
+
+	  <pre>
+00..00000 nil
+....10000 fixnum
+....11000 character
+.......01 cons
+.......10 arrays etc
+.......11 strings etc
+	  </pre>
+
+	  <p>"Arrays etc" include symbol, simple-vector, array,
+	  package, function, and instance.  "Strings etc" include
+	  simple-string, double, simple-bit-vector, and file-stream.</p>
+
+	  <p><b>LispWorks</b></p>
+
+	  <p>Unknown.</p>
+
+	  <p><b>MCL</b></p>
+
+	  <p>Same as OpenMCL?</p>
+
+	  <p><b>Movitz</b></p>
+
+	  <pre>
+...00 fixnum
+..001 cons
+..010 character
+..101 nil
+..110 other pointer
+..111 symbol
+	  </pre>
+
+	  <p><b>MusCL</b></p>
+
+	  <pre>
+...00 immediate
+..000 fixnum
+.0100 character
+...01 cons
+...10 record
+...11 callable
+	  </pre>
+
+	  <p><b>OpenMCL</b></p>
+
+	  <pre>
+...00 fixnum
+..001 cons
+..010 gvector header
+..011 immediate
+..101 nil
+..110 pointer to uvector
+..111 ivector header
+	  </pre>
+
+	  <p><b>SBCL</b></p>
+
+	  <pre>
+...00 fixnum
+..001 instance
+...10 other immediate
+..011 list
+..101 function
+..111 other pointer
+	  </pre>
+
+	  <p><b>SCL</b></p>
+
+	  <p>Unknown.</p>
+	</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+	  <hr noshade>
+	  Last changed <modified/>
+	</td>
+      </tr>
+    </table>
+  </body>
+</html>

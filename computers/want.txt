@@ -1,0 +1,24 @@
+have:
+Alpha		H EB66+, 21066A
+ARM		H NetWinder, StrongARM-110
+M68000		H Falcon030, MC68030
+PDP-10		S KLH10, KL10 Model B
+PowerPC		H PowerMac G4, MPC7510
+SPARC		H SPARCstation 5, microSPARC-II
+SPARC		H SPARCstation ELC, MB86903
+
+want:
+ARM		H ? Zaurus, StrongARM-1110
+M32R		S GDB simulator
+MIPS		H ? PlayStation 2
+MIPS		S GDB simulator
+MN10300		S GDB simulator
+PDP-11		S P11
+S/390		S Hercules
+SPARC		H Sun Blade 100, UltraSPARC-IIe
+SuperH		  ?
+SuperH		S GDB simulator
+V800		S GDB simulator
+VAX		S SIMH, CVAX KA655
+x86		H ? PC, Athlon
+z/Arch		S Hercules

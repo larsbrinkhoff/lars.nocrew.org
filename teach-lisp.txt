@@ -1,0 +1,187 @@
+Lisp syntax is structurally equivalent with XML.  E.g. starting with a
+simple HTML document:
+
+1.	<html>
+	  <body>
+	    <p>foo <b>bar</b> baz</p>
+	  </body>
+	</html>
+
+Remove the end tag names, because except explicitly pairing with the
+start tag, they don't add any expressivity to the syntax:
+
+2.	<html>
+	  <body>
+	    <p>foo <b>bar</> baz</>
+	  </>
+	</>
+
+The > and </ characters are redundant too, leaving:
+
+3.	<html
+	  <body
+	    <p foo <b bar> baz>
+	  >
+	>
+
+Now smooth the angle brackets to round parentheses, and we have
+perfectly valid Lisp syntax:
+
+4.	(html
+	  (body
+	    (p foo (b bar) baz)
+	  )
+	)
+
+This is still quite recognisable from the HTML original.
+Conventionally, closing parentheses are not left dangling:
+
+5.	(html
+	  (body
+	    (p foo (b bar) baz)))
+
+In fact, this could also be a valid Lisp program.  E.g. html, body, p,
+and b may be defined as functions, and foo, bar, and baz as variables.
+
+----------------------------------------------------------------------
+
+The previous exercise can be repeated with JSON:
+
+1.	{
+	  "firstName" : "John",
+	  "lastName" : "Smith",
+	  "age" : 25,
+	  "phoneNumbers" : [ "", "", "" ]
+	}
+
+N.	((firstName "John")
+	 (lastName "Smith")
+	 (age 25)
+	 (phoneNumbers "" "" ""))
+
+----------------------------------------------------------------------
+
+Going the other direction, we could start with a small Lisp function
+foo, which accepts two arguments and passes them on to another
+function called bar:
+
+1.	(defun foo (x y)
+	  (bar x y))
+
+Mechanically applying the previous rules backwards, we would get:
+
+2.	<defun>foo <x>y</x>
+	  <bar>x y</bar>
+	</defun>
+
+However, defun is a macro which deals specially with foo and (x y).
+This maps quite well to XML attributes, so better rendition would be:
+
+3.	<defun name="foo" parameters="x y">
+	  <bar>x y</bar>
+	</defun>
+
+----------------------------------------------------------------------
+
+Lisp is usually written using prefix notation with the operator
+appearing before the operands.  Many popular languages have a mix of
+prefix, infix and possibly suffix operators.  However, the majority
+only allows the user to add new prefix operators, i.e. functions,
+procedures, or methods.  This has the effect that larger programs tend
+to have a significant number of prefix-style applications.  Which then
+is not that different from any Lisp program.
+
+For example, start with a small C statement involving only function
+calls:
+
+1.	foo(x, bar(), baz(y));
+
+First, remove punctuation:
+
+2.	foo(x bar() baz(y))
+
+Second, move the operator inside the following parenthesis:
+
+3.	(foo x (bar) (baz y))
+
+And we have Lisp.
+
+----------------------------------------------------------------------
+
+Arithmetic and logic are usually presented as infix operators in
+popular languages.  Declarations and control flow is done with special
+syntax.  In Lisp, these are all done with prefix operators.
+
+----------------------------------------------------------------------
+
+Comparison of array handling in C and Lisp.
+
+	int * foo (int n) {
+	  int i, *array = malloc (n * sizeof (int));
+	  for (i = 0; i < n; i++)
+	    array[i] = i;
+	  return array;
+	}
+
+	(defun foo (n)
+	  (let ((array (make-array n)))
+	    (dotimes (i n)
+	      (setf (aref array i) i))
+	    array))
+
+Linked lists is a data structure with a long tradition in Lisp, so
+they are particularly easy to use:
+
+	list_t * bar (int n) {
+	  if (n == 0)
+	    return NULL;
+	  list_t * list = malloc (sizeof (list_t));
+	  list->data = n;
+	  list->next = bar (n - 1);
+	  return list;
+	}
+
+	(defun bar (n)
+	  (if (= n 0)
+	    nil
+	    (cons n (bar (- n 1)))))
+
+----------------------------------------------------------------------
+
+Lisp really shines when it comes to metaprogramming.  This is
+certainly also possible in most languages.  E.g. in C this could be a
+way to dynamically generate code, compile it, and then run it:
+
+1.	void macro (char *name, int x) {
+          FILE * f = fopen ("tmp.c", "r");
+	  fprintf (f, "int %s (int y) { return y + %d; } ", name, x);
+	  fclose (f);
+	  system ("gcc main.c tmp.c && ./a.out");
+	}
+
+It's not a big leap to see that it would be easier if the compiler was
+available by a function call which returned the compiled code directly:
+
+2.	void macro (char *name, int x) {
+	  int (*f)(int);
+          char s[N];
+	  snprintf (s, N, "int %s (int y) { return y + %d; } ", name, x);
+	  f = compile(s);
+	  f(42);
+	}
+
+This is exactly the case in Lisp.  Note that the compiler accepts the
+program as a nested data structure - namely lists - rather than a flat
+string:
+
+3.	(defun macro (name x)
+	  (let ((f (compile name `(lambda (y) (+ y ,x)))))
+	    (funcall f)))
+
+However, most of the time we don't need to generate code at run time,
+just at compile time.  In C, this would be accomplished by having one
+program generate the code, and another #including it.  In Lisp the
+same program can generate code and use the result:
+
+4.	(defmacro macro (name x) `(defun ,name (+ y ,x)))
+	(funcall (macro foo 42))

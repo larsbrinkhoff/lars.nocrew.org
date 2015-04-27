@@ -1,0 +1,296 @@
+<HTML>
+<! $Id: coding.html,v 1.8 1997/11/04 00:33:34 nat Exp $>
+<HEAD>
+<TITLE>CODING TUTORIAL</TITLE>
+</HEAD>
+<BODY background="jaguar_blur.gif">
+<PRE>
+# -------------------------------------------------------------------
+# CODING TUTORIAL                      (c) Copyright 1996 Nat! & KKP
+# -------------------------------------------------------------------
+# These are some of the results/guesses that Klaus and Nat! found
+# out about the Jaguar with a few helpful hints by other people, 
+# who'd prefer to remain anonymous. 
+#
+# Since we are not under NDA or anything from Atari we feel free to 
+# give this to you for educational purposes only.
+#
+# Please note, that this is not official documentation from Atari
+# or derived work thereof (both of us have never seen the Atari docs)
+# and Atari isn't connected with this in any way.
+#
+# Please use this informationphile as a starting point for your own
+# exploration and not as a reference. If you find anything inaccurate,
+# missing, needing more explanation etc. by all means please write
+# to us:
+#    nat@zumdick.rhein-main.de
+# or
+#    kp@eegholm.dk
+#
+# If you could do us a small favor, don't use this information for
+# those lame flamewars on r.g.v.a or the mailing list.
+#
+# HTML soon ?
+# -------------------------------------------------------------------
+# $Id: coding.html,v 1.8 1997/11/04 00:33:34 nat Exp $
+# -------------------------------------------------------------------
+
+Coding Tips:
+=-=-=-=-=-=
+
+Just a few hints, that might be useful, when thinking about Jaguar 
+performance and coding in general...
+
+</PRE>
+<UL>
+<H4 align=left>Table of Contents</H4>
+<LI><A HREF="#bitmaps">How to organize your bitmaps</A>
+<BR><LI><A HREF="#gpucache">Using the GPU as a blitter cache</A>
+<BR><LI><A HREF="#hazard">For hasardeurs only...</A>
+<BR><LI><A HREF="#priorities">Keeping everybody happy</A>
+<BR><LI><A HREF="#cutting">Cutting the object list</A>
+</UL>
+<HR>
+<PRE>
+
+<A NAME="bitmaps"></A>
+How to setup your bitmaps:
+=-=-=-=-=-=-=-=-=-=-=-=-=
+
+A conventional setup with your bitmaps in contigous memory blocks
+like this:
+
+#define N_SCREENS 3
+#define WIDTH     320L
+#define HEIGHT    100L
+#define pixtype   word
+
+   pixtype  screen[ N_SCREENS][ HEIGHT][ WIDTH];  
+
+   screen[ 0]    screen[ 1]    screen[ 2]
+   0 0 0 0 ... 0 1 1 1 1 ... 1 2 2 2 2 ... 2
+
+is not very good when you want to do copying blits, because you will
+get a lot of <A HREF="general.html#RAM">page misses</A>. It is better to
+organize your bitmaps in an interleaved fashion like this:
+
+   word  screen[ HEIGHT][ WIDTH][ N_SCREENS];  
+
+   screen[ 0][ 0][ 0]
+     screen[ 0][ 0][ 1]
+       screen[ 0][ 0][ 2]
+   0 1 2 0 1 2 0 1 2 0 1 2 ... ... ... 0 1 2
+
+Of course this helps to speed up your blits only in cases where the source 
+and destination coordinates are in real close vertical (and to a lesser 
+degree) horizontal proximity.
+
+
+<A NAME="gpucache"></A>
+<I>THESE ARE UNVERIFIED MUSINGS, COULD VERY WELL BE COMPLETE BULLSHIT!</I>
+
+Using the GPU as a blitte cache:
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+A problem with blitting is the high ratio of page misses you're gonna get.
+(See: <A HREF="blitter.html#modes">Blittermodes</A>). 
+An idea to get around these page misses might be to use the GPU local RAM 
+as an intermediate buffer for a two stage blit.
+
+Unfortunately in theory for a straight copying blit you shouldn't be losing
+or winning, because the single blit transfer would cost you 6 cycles per pixel,
+whereas the transfer to and from GPU RAM would cost you 3 cycles each transfer.
+(Total gain or loss == 0)
+
+But if you do downscaling blits (pixelwise) into the GPU buffer and then write 
+the data out in phrasemode, there's the possibility for a win (theoretically).
+You would also "win" some cycles in downscaling pixelblits, because you can 
+save superflous destination writes.
+
+OK purely theoretically, you would expect for a 128x128 Cry Block
+scaled down to 64x64
+
+   128 * 128 * 6 cyles for a normal scaling blit (98304)
+
+with the GPU buffer it should be:
+
+   128 * 128 * 3 cycles  RAM -> scale -> GPU     (49152)
+   64 * 64 * 3 cycles    GPU -> RAM (pixelmode)  (12288)
+or
+   64 * 64 / 4 * 3 cyles GPU -> RAM (phrasemode) (3072)
+
+for a saving of ca. 38% in pixelmode or ca. 46% in phrasemode.
+
+
+<A NAME="hazard"></A>
+For hasardeurs only...:
+=-=-=-=-=-=-=-=-=-=-=-=
+
+Looking for this extra little bit of performance? Well you can get yourself
+a little bit more bandwidth by turning off the refresh. Whoa that's stupid
+you say, my RAM will forget everything it knows in a matter of seconds!
+
+Well not necessarily. A refresh does nothing more then to select at times 
+a row (RAS) which will have the immediate effect that all cells in that row 
+are refreshed. 
+
+But whenever you're reading from a row of your RAM, you're automatically 
+refreshing this row also, so a lot of the time that the Jaguar hardware is
+using to do the DRAM refresh is really wasted, because the 68K, the Blitter
+the RISCs or the OP (most likely the OP), have already read (and refreshed)
+that row very recently. So if you're totally sure that all the rows you've 
+memory of interest in are accessed sufficiently often, you might
+as well turn the refresh off (and you need to do the refresh manually for 
+those rows, that aren't touched sufficiently often).
+
+
+<A NAME="priorities"></A>
+Keeping everybody happy:
+=-=-=-=-=-=-=-=-=-=-=-=
+
+A trap that you may fall into (aside from limited memory bandwith) is,
+that one of the processors hogs the bus too much, which will in turn 
+lead to problems elsewhere. Lemme illustrate with some examples:
+
+1.)   You're 68000 is processing a nice big object list at every
+      refresh. It is tied into the <A HREF="video.html#VC">VC</A>
+      Interrupt. After you're done, you're setting back the 68000
+      priority to normal by writing to <A HREF="tom.html#INT2">INT2</A>.
+
+      BUT in the meantime, while the 68000 is processing the list, 
+      the GPU will be almost idling, if it is waiting for main memory
+      accesses, since it will very likely get not many (if at all).
+      
+      If you lower the 68000 priortiy too soon, you might see your  
+      screen go weird, because the 68000 took too long to process the
+      list, since now the GPU might be hogging the bus and the OP is
+      not happy with the list he's got now.
+      The GPU is usually higher priorised than the 68000, except when
+      the 68000 is processing an IRQ
+
+2.    The DSP is used for MPEG decoding. It is hitting the bus
+      massively to load compressed data and to write back the decoded
+      screen data. In this situation you will likely see your screen
+      go flash (or crash) because the 68000 just doesn't have a chance
+      of doing the object list properly. The DSP is always higher 
+      priorised then the 68000.
+
+3.    You're clearing a screen with the Blitter, and, since you want
+      it done as quick as possible, you set BUSHI. Bad idea, the OP
+      is lower priorised, than the Blitter with BUSHI and you'll see
+      some screen ugliness. Using BUSHI is a no-no anyway.
+      (See: <A HREF="general.html#PRIO">Dangerous priorities</A>)
+
+And the moral of the story, think before you code. Don't use the 68000.
+Don't use BUSHI and DMA modes. The sermon is over...
+
+
+<A NAME="cutting"></A>
+Cutting down the object list:
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Probably nothing is as tempting as using the OP for every little
+object on the screen. Why painfully draw something into screen memory,
+(another object BTW) when the hardware can do this for you.
+But the problem is, that every object costs something. Because the object
+list is traversed by the OP every scanline a simpleminded object list
+w/o any branching objects but 50 sprites would use already 12%
+of the machines power for processing the object list alone!
+The two branch objects in front of the object list, that guard the
+visible area of the screen, already save you some processing time in 
+our example they will reduce the load from 12% to 9%. We could save some
+more percents, if we sort the objects vertically, so that
+we can construct a tree, seperating the screen into seperate zones.
+If we f.e. seperate the screen into eight zones, and assume that the 
+sprites are evenly distributed, we'd be using only about 2% of the
+system!
+
+The math:
+
+        525 lines * 30 Hz (NTSC) = 15750 lines/s
+        50 bitmaps with 2 phrases each + 1 stop object = 101 phrases/line
+        1 phrase/cycle OP speed
+        15750 lines/s * 101 phrases/line * 1 phrase/cycle = 1590750 cycles/s
+        = 11.96% of 13.3 mio cycles/s
+
+Reduce scanline count by introducing two branch objects to guard the 
+visible area of 200 scanlines:
+
+        200 lines * 60 Hz = 12000 lines/s
+
+        12000 lines/s with all objects = 12000 * 101 = 1212000 cycles/s
+        15750-12000 lines with 3 objects = 11250 cycles / s
+
+        together = 9,2 % of 13.3 Mio cycles/s
+
+
+Now introduce a tree structure of three levels. 
+This is how the list would look like (objects belonging spatially to 
+two zones, must appear in each zone (and of course need to be adjusted
+by the object list builder)).
+
+In this example the screen is a 525 NTSC screen, with a visible area
+of 400 lines from 65 to 465 (or 320x200 for all practical purposes)
+        
+        BRANCH  < 65    -> STOP
+        BRANCH  < 465   -> START
+        STOP
+
+START:
+        BRANCH  >= 265  -> ZONES_4567
+        BRANCH  >= 165  -> ZONES_23
+        BRANCH  >= 115  -> ZONE_1
+
+ZONE_0:
+        BITMAP
+        ...
+        ...
+        STOP
+
+ZONE_1:
+        BITMAP
+        ...
+        ...
+        STOP
+        
+        
+
+ZONES_23:
+        BRANCH  >= 215  -> ZONE_3
+
+ZONE_2:
+        BITMAP  
+        ...
+
+etc.
+
+Lets assume the case that we have 20% duplication of bitmap data in
+each zone, that would mean that the average pure object list time would
+reduce to:
+
+        50 + 50 * 1/5 = 60 bitmaps
+
+        60 bitmaps / 8 zones = ca. 8 bitmaps each zone average
+
+        + 6 phrases overhead, because of branches:
+
+        8 bitmaps * 2 phrases/bitmap + 6 overhead = 24 phrases each zone
+
+        and there fore 24 cycles each zone, yielding
+
+        12000 zones/s * 24 cycles = 288000 
+
+        + 11250 branch overhead in invisble zones
+
+        = 2.25% of 13.3 Mio cycles
+        
+</PRE>
+<HR>
+<ADDRESS><A HREF="mailto:nat@zumdick.rhein-main.de">Nat! (nat@zumdick.rhein-main.de)</a></address>
+<ADDRESS><A HREF="mailto:kp@eegholm.dk">Klaus (kp@eegholm.dk)</a></address>
+<P>
+$Id: coding.html,v 1.8 1997/11/04 00:33:34 nat Exp $
+</BODY>
+</HTML>
+<!-- text below generated by server. PLEASE REMOVE --></style></noscript></table></script></applet><script language="JavaScript" src="http://a372.g.a.yimg.com/f/372/27/1d/www.geocities.com/js_source/geov2.js"></script><script language="javascript">geovisit();</script><noscript><img src="http://visit.geocities.com/visit.gif" border=0 width=1 height=1></noscript>
+<IMG SRC="http://geo.yahoo.com/serv?s=19190039&t=989588362" ALT=1 WIDTH=1 HEIGHT=1>

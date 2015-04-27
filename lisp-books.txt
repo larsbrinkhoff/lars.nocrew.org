@@ -1,0 +1,56 @@
+"Henrik Sandklef" <henrik@sandklef.com> writes:
+> Efter att ha läst en artikel skriven av Paul Graham* (tack för tipset
+> Lars) är jag nu på jakt efter en god bok om Lisp (Common Lisp, inte
+> Emacs). Har ni en bok att rekommendera?
+
+Jag kan ju skriva lite om de jag har läst (i den ordningen jag läste dem).
+De finns också listade på http://lars.nocrew.org/computers/books.html
+
+* "Common Lisp, the Language", 2nd ed, Guy L Steele, 1990.
+
+  Lämplig som referensmanual.  Den beskriver en något äldre variant av
+  språket.  Skillnaderna mot ANSI Common Lisp är dock inte så stora.
+  Fast Common Lisp HyperSpec är nog den bästa referensen.  (Dessutom
+  så ryktas det om en kommande bok kallad "ANSI Common Lisp Reference".)
+
+* "Paradigms of Artificial Intelligence Programming", Peter Norvig, 1992.
+
+  Massor av bra exempel på god Common Lisp-programmering.  Bra läsning
+  när man redan kan lite om språket.  Enligt min mening handlar den
+  egentligen inte så mycket om AI.
+
+* "ANSI Common Lisp", Paul Graham, 1995.
+
+  Detta är nog den bästa boken för att lära sig språket om man redan
+  kan en del om programmering i allmänhet (och kanske lite om Lisp).
+  Den börjar ganska försiktigt och går aldrig in på de mest avancerade
+  aspekterna i större detalj.
+
+* "On Lisp", Paul Graham, 1993.
+
+  Förmodligen den bästa boken som handlar om varför Lisp är ett
+  spännande språk.  Undertiteln är "Advanced Techniques for Common
+  Lisp", och den tar vid där "ANSI Common Lisp" slutar.  Tyvärr har
+  den tagit slut hos förlaget, men finns som PDF-fil.  Det ryktas om
+  att en ny upplaga ska komma från ett annat förlag.
+
+* "Object-Oriented Programming in COMMON LISP", Sonya E Keene, 1989.
+
+  Utmärkt bra bok om man vill lära sig mer om objekt-orienterad
+  programmering i Lisp.  Lämplig när man redan kan en del om Lisp, men
+  inget om CLOS (Common Lisp Object System).
+
+  För övrigt har jag tidigare aldrig varit särskilt intresserad av
+  OOP, men CLOS verkar riktigt användbart!
+
+* "The Art of the Metaobject Protocol", Gregor Kiczales, Jim des
+  Rivieres & Daniel G Bobrow, 1991.
+
+  (Just börjat, har bara läst två sidor.)  Berömd för att handla om
+  avancerade aspekter av CLOS.
+
+Denna har jag inte har läst:
+
+* "Programmering i Lisp", Anders Haraldsson, 1993.
+
+  Nybörjarbok på svenska.

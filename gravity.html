@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+
+  <body>
+
+    <canvas id="scene" width=500 height=500></canvas><br>
+    Initial velocity:
+    <button onclick="JavaScript:reset(0)">Linear</button>
+    <button onclick="JavaScript:reset(1)">Elliptical</button>
+    <button onclick="JavaScript:reset(2)">Circular</button><br>
+    Epsilon:
+    <button onclick="JavaScript:set_epsilon(0)">ε := 0</button>
+    <button onclick="JavaScript:set_epsilon(1)">ε := 1</button>
+    <button onclick="JavaScript:set_epsilon(5)">ε := 5</button>
+
+    <script>
+
+      var canvas = document.getElementById ('scene');
+      var ctx = canvas.getContext('2d');
+      var w = canvas.width;
+      var h = canvas.height;
+
+      var px = 0;
+      var py = w/4;
+      var vx = 2;
+      var vy = 0;
+      var M = 5;
+      var epsilon = 5;
+
+      var redraw = function() {
+          ctx.save();
+          ctx.fillRect(0, 0, w, h);
+
+          ctx.translate(w / 2, h / 2);
+          circle('yellow', 30);
+
+          ctx.translate(px, py);
+          circle('green', 10);
+
+          var r2 = px*px + py*py;
+          var e2 = epsilon*epsilon;
+          r2 += e2;
+          vx -= M * px / r2;
+          vy -= M * py / r2;
+          px += vx;
+          py += vy;
+
+          ctx.restore();
+          window.requestAnimationFrame(redraw);
+      }
+
+      function circle(color, radius) {
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius, 0, 2*Math.PI, true);
+          ctx.closePath();
+          ctx.fill();
+      }
+
+      function reset(v) {
+          px = 0;
+          py = w/4;
+          vx = v;
+          vy = 0;
+      }
+
+      function set_epsilon(e) {
+          epsilon = e;
+      }
+
+      if (!window.requestAnimationFrame) {
+          window.requestAnimationFrame =
+      	      window.webkitRequestAnimationFrame ||
+      	      window.mozRequestAnimationFrame ||
+      	      window.oRequestAnimationFrame ||
+      	      window.msRequestAnimationFrame ||
+      	      function(callback, element) {
+      		  window.setTimeout(callback, 1000 / 60);
+      	      };
+      }
+
+      window.requestAnimationFrame(redraw);
+
+    </script>
+  </body>
+</html>
